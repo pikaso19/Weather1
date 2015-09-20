@@ -1,9 +1,14 @@
 package mu.zz.pikaso.weather;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import mu.zz.pikaso.weather.internet.Connection;
+import mu.zz.pikaso.weather.pojo.CurrentWeather;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -13,6 +18,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 		//One more comment, from copy of project
 	// from another user (bodja)
+
+
+
+
     }
 
 
