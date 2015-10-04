@@ -3,12 +3,9 @@ package mu.zz.pikaso.weather.internet;
 
 import mu.zz.pikaso.weather.pojo.CurrentWeather;
 import retrofit.Call;
-import retrofit.Response;
-import retrofit.http.Field;
+
 import retrofit.http.GET;
-import retrofit.http.Path;
 import retrofit.http.Query;
-import rx.Observable;
 
 /**
  * Created by pikaso on 20.09.2015.

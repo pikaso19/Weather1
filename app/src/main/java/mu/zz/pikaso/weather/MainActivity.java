@@ -1,25 +1,42 @@
 package mu.zz.pikaso.weather;
 
-import android.os.AsyncTask;
+
+import android.app.Activity;
+import android.app.Application;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuItem;
 
-import mu.zz.pikaso.weather.internet.Connection;
-import mu.zz.pikaso.weather.pojo.CurrentWeather;
 
-public class MainActivity extends AppCompatActivity {
+import mu.zz.pikaso.weather.ui.IActionUI;
+
+public class MainActivity extends AppCompatActivity implements IActionUI{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-		//One more comment, from copy of project
-	// from another user (bodja)
 
+        // Check that the activity is using the layout version with
+        // the fragment_container FrameLayout
+        if (findViewById(R.id.fragment) != null) {
+            if (savedInstanceState != null) {
+                return;
+            }
+            // Create a new Fragment to be placed in the activity layout
+            MainActivityFragment firstFragment = new MainActivityFragment();
 
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            firstFragment.setArguments(getIntent().getExtras());
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment, firstFragment).commit();
+        }
 
 
     }
@@ -45,5 +62,56 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /*
+                                                FRAGMENT 1
+    */
+    @Override
+    public void onClickRefreshALL (){
+        //TODO: Get weather forecast for favourites cities
+
+        //TODO: delete line for changing fragment
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment, new WeatherFragment()).addToBackStack(null).commit();
+
+
+    }
+
+    @Override
+    public void onClickAddCity() {
+        //TODO: dialog "add city"
+        //TODO: call dialog
+    }
+
+    @Override
+    public void onClickExit() {
+        finish();
+        System.exit(0);
+    }
+
+    @Override
+    public void onCitySelected(String city) {
+        //TODO: call weather fragment
+        WeatherFragment wf = WeatherFragment.newInstance("Lviv");
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment, wf).addToBackStack(null).commit();
+    }
+
+    @Override
+    public void onCityDelete(String city) {
+        //TODO: delete city on long press
+    }
+
+    /*
+                                                    FRAGMENT 2
+    */
+
+    @Override
+    public void onClickRefresh() {
+
+    }
+
+    @Override
+    public void onClickMenu() {
+
     }
 }

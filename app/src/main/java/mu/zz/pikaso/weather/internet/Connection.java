@@ -10,18 +10,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
-import rx.Observable;
+
 
 import mu.zz.pikaso.weather.pojo.CurrentWeather;
 import retrofit.Call;
-import retrofit.Callback;
 import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
-import retrofit.RxJavaCallAdapterFactory;
-import retrofit.http.GET;
-import retrofit.http.Path;
-import rx.Subscriber;
+
+
 
 /**
  * Created by pikaso on 18.09.2015.
