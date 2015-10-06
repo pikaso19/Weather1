@@ -1,15 +1,14 @@
-package mu.zz.pikaso.weather.internet;
+package mu.zz.pikaso.weather.ui;
 
 
-import android.app.Activity;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import mu.zz.pikaso.weather.internet.Connection;
 
 /**
  * Created by pikaso on 06.10.2015.
@@ -41,8 +40,12 @@ public class SearchCityTask extends AsyncTask<Void,Void,Void> {
         super.onPostExecute(aVoid);
         //UPDATE
         ((ArrayAdapter<String>)listView.getAdapter()).clear();
-        for (int i=0;i<cities.size();i++) {
-            ((ArrayAdapter<String>)listView.getAdapter()).insert(cities.get(i), i);
+        if(cities.size()>0){
+            for (int i=0;i<cities.size();i++) {
+                ((ArrayAdapter<String>)listView.getAdapter()).insert(cities.get(i), i);
+            }
+        }else{
+            ((ArrayAdapter<String>)listView.getAdapter()).insert("Nothing Found", 0);
         }
         ((ArrayAdapter<String>)listView.getAdapter()).notifyDataSetChanged();
     }

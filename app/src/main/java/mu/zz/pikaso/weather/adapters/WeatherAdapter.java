@@ -7,14 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-import java.sql.Date;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
-
 
 import mu.zz.pikaso.weather.R;
 import mu.zz.pikaso.weather.representations.Weather;
@@ -49,7 +43,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherH
 
     @Override
     public WeatherHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.weatherlist_row,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_weatherlist,parent,false);
 
         WeatherHolder weatherHolder = new WeatherHolder(view);
         return weatherHolder;

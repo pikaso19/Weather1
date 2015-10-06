@@ -1,15 +1,11 @@
 package mu.zz.pikaso.weather.internet;
 
-import android.util.Log;
-
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 import mu.zz.pikaso.weather.pojo.CurrentWeather;
 import retrofit.Call;

@@ -5,12 +5,10 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.HashMap;
 import java.util.List;
 
 import mu.zz.pikaso.weather.R;
@@ -48,7 +46,7 @@ public class CitiesListAdapter extends BaseAdapter {
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) context
                     .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.citylist_row, null);
+            convertView = mInflater.inflate(R.layout.row_citylist, null);
         }
 
         ImageView flag = (ImageView) convertView.findViewById(R.id.flag);

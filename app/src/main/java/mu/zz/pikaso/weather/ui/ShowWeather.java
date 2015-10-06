@@ -1,7 +1,6 @@
 package mu.zz.pikaso.weather.ui;
 
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.EditText;
 
 import mu.zz.pikaso.weather.internet.Connection;

@@ -13,7 +13,6 @@ public interface IActionUI {
     void onCityDelete(String city);
 
     //fragment 2
-    void onClickMenu();
     void onClickRefresh();
 
     //fragment 3

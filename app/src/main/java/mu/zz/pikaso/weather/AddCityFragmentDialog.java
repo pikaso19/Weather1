@@ -3,7 +3,6 @@ package mu.zz.pikaso.weather;
 import android.app.Dialog;
 import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import mu.zz.pikaso.weather.internet.SearchCityTask;
+import mu.zz.pikaso.weather.ui.SearchCityTask;
 import mu.zz.pikaso.weather.ui.IActionUI;
 
 /**

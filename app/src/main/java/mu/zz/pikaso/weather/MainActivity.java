@@ -1,16 +1,12 @@
 package mu.zz.pikaso.weather;
 
 
-import android.app.Activity;
-import android.app.Application;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 
 
 import mu.zz.pikaso.weather.ui.IActionUI;
@@ -29,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements IActionUI{
                 return;
             }
             // Create a new Fragment to be placed in the activity layout
-            MainActivityFragment firstFragment = new MainActivityFragment();
+            MenuFragment firstFragment = new MenuFragment();
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -73,10 +69,6 @@ public class MainActivity extends AppCompatActivity implements IActionUI{
     public void onClickRefreshALL (){
         //TODO: Get weather forecast for favourites cities
 
-        //TODO: delete line for changing fragment
-        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment, new WeatherFragment()).addToBackStack(null).commit();
-
-
     }
 
     @Override
@@ -109,12 +101,7 @@ public class MainActivity extends AppCompatActivity implements IActionUI{
 
     @Override
     public void onClickRefresh() {
-
-    }
-
-    @Override
-    public void onClickMenu() {
-
+        //TODO: refresh weather for current city
     }
 
     /*

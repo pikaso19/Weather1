@@ -91,12 +91,7 @@ public class WeatherFragment extends Fragment {
         menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try{
-                    ((IActionUI) getActivity()).onClickMenu();
-                } catch (ClassCastException e) {
-                    throw new ClassCastException(getActivity().toString()
-                        + " must implement IActionUI");
-                }
+                getActivity().onBackPressed();
             }
         });
 

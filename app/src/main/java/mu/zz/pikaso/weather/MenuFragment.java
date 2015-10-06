@@ -19,12 +19,12 @@ import mu.zz.pikaso.weather.ui.IActionUI;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends ListFragment {
+public class MenuFragment extends ListFragment {
     private Button btnRefreshAll = null;
     private Button btnAddCity = null;
     private Button btnExit = null;
 
-    public MainActivityFragment() {
+    public MenuFragment() {
     }
 
 
@@ -72,7 +72,7 @@ public class MainActivityFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, null, true);
+        return inflater.inflate(R.layout.fragment_menu, null, true);
     }
 
     List<City> cities = new ArrayList<City>();
@@ -81,6 +81,7 @@ public class MainActivityFragment extends ListFragment {
         super.onActivityCreated(savedInstanceState);
 
         //TODO: read favourites cities from sql!
+        cities.clear();
         cities.add(new City(0,"Lviv",R.drawable.noflag));
         cities.add(new City(1,"Kyiv",R.drawable.noflag));
         cities.add(new City(3,"London",R.drawable.noflag));
