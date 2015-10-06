@@ -1,6 +1,11 @@
 package mu.zz.pikaso.weather.internet;
 
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import org.json.JSONObject;
+
 import mu.zz.pikaso.weather.pojo.CurrentWeather;
 import retrofit.Call;
 
@@ -14,4 +19,7 @@ public interface WeatherAPI {
 
     @GET("/data/2.5/weather?APPID=0500035c707563f90fcdd99cf6b1009a&")
     Call<CurrentWeather> getCurrentWeather(@Query("q") String city);
+
+    @GET("/data/2.5/find?mode=json&cnt=10&type=like")
+    Call<JsonObject> getAvailableCities(@Query("q") String city);
 }

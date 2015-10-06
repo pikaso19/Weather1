@@ -7,8 +7,10 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 
 
 import mu.zz.pikaso.weather.ui.IActionUI;
@@ -72,15 +74,15 @@ public class MainActivity extends AppCompatActivity implements IActionUI{
         //TODO: Get weather forecast for favourites cities
 
         //TODO: delete line for changing fragment
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment, new WeatherFragment()).addToBackStack(null).commit();
+        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment, new WeatherFragment()).addToBackStack(null).commit();
 
 
     }
 
     @Override
     public void onClickAddCity() {
-        //TODO: dialog "add city"
-        //TODO: call dialog
+        AddCityFragmentDialog dialog = new AddCityFragmentDialog();
+        dialog.show(getSupportFragmentManager().beginTransaction(), null);
     }
 
     @Override
@@ -113,5 +115,14 @@ public class MainActivity extends AppCompatActivity implements IActionUI{
     @Override
     public void onClickMenu() {
 
+    }
+
+    /*
+                                                    FRAGMENT 3
+    */
+
+    @Override
+    public void onCityAdd(String city) {
+        Log.d("0k19vej5ug", "Selected city: "+city+"\n");
     }
 }

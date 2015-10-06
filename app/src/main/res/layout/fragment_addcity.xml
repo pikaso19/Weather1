@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Add city"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:typeface="serif"
+            android:background="#000"
+            android:textSize="30sp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edDSearch"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:inputType="text"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical">
+            <requestFocus />
+        </EditText>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/search3"
+            android:layout_gravity="center_vertical|right"
+            android:id="@+id/btnDSearch" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Choose city"
+        android:textSize="25sp"
+        android:gravity="center_horizontal" />
+
+    <ListView
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/listCities"
+        android:layout_weight="1"
+        android:listSelector="#000" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Accept"
+            android:id="@+id/btnDAccept"
+            android:layout_weight="1"
+            android:layout_marginRight="10dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:id="@+id/btnDBack" />
+    </LinearLayout>
+
+
+</LinearLayout>

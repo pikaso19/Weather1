@@ -15,4 +15,7 @@ public interface IActionUI {
     //fragment 2
     void onClickMenu();
     void onClickRefresh();
+
+    //fragment 3
+    void onCityAdd(String city);
 }
