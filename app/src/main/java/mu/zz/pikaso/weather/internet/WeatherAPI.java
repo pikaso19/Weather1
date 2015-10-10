@@ -20,7 +20,7 @@ public interface WeatherAPI {
     @GET("/data/2.5/weather?APPID=0500035c707563f90fcdd99cf6b1009a&units=metric")
     Call<CurrentWeather> getCurrentWeather(@Query("id") int cityID);
 
-    @GET("/data/2.5/find?mode=json&cnt=10&type=like")
+    @GET("/data/2.5/find?APPID=0500035c707563f90fcdd99cf6b1009a&cnt=15&type=like")
     Call<JsonObject> getAvailableCities(@Query("q") String city);
 
     @GET("/data/2.5/forecast/daily?APPID=0500035c707563f90fcdd99cf6b1009a&units=metric&cnt=16")

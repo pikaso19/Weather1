@@ -17,6 +17,9 @@ import mu.zz.pikaso.weather.ui.IActionUI;
 import mu.zz.pikaso.weather.ui.RecvForecastTask;
 
 public class MainActivity extends FragmentActivity implements IActionUI{
+    private WeatherFragment weatherFragment;
+    private MenuFragment menuFragment;
+    private AddCityFragmentDialog dialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,15 +34,16 @@ public class MainActivity extends FragmentActivity implements IActionUI{
                 return;
             }
             // Create a new Fragment to be placed in the activity layout
-            MenuFragment firstFragment = new MenuFragment();
+            menuFragment = new MenuFragment();
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
-            firstFragment.setArguments(getIntent().getExtras());
+            menuFragment.setArguments(getIntent().getExtras());
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment, firstFragment).commit();
+                    .add(R.id.fragment, menuFragment).commit();
+
         }
 
 
@@ -78,8 +82,8 @@ public class MainActivity extends FragmentActivity implements IActionUI{
 
     @Override
     public void onClickAddCity() {
-        AddCityFragmentDialog dialog = new AddCityFragmentDialog();
-        dialog.show(getSupportFragmentManager().beginTransaction(), null);
+        dialogFragment = new AddCityFragmentDialog();
+        dialogFragment.show(getSupportFragmentManager().beginTransaction(), null);
     }
 
     @Override
@@ -91,8 +95,8 @@ public class MainActivity extends FragmentActivity implements IActionUI{
     @Override
     public void onCitySelected(City city) {
         //TODO: call weather fragment
-        WeatherFragment wf = WeatherFragment.newInstance(city.getName(),city.getId());
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment, wf).addToBackStack(null).commit();
+        weatherFragment = WeatherFragment.newInstance(city.getName(),city.getId());
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment, weatherFragment).addToBackStack(null).commit();
     }
 
     @Override
@@ -118,5 +122,7 @@ public class MainActivity extends FragmentActivity implements IActionUI{
     @Override
     public void onCityAdd(City city) {
         Log.d("0k19vej5ug", "Selected city: "+city.getName()+"\n");
+        menuFragment.addCity(city);
+        dialogFragment.dismiss();
     }
 }

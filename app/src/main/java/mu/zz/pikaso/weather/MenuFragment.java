@@ -2,6 +2,7 @@ package mu.zz.pikaso.weather;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,6 @@ public class MenuFragment extends ListFragment {
             }
         });
 
-
         return rootView;
     }
 
@@ -61,9 +61,13 @@ public class MenuFragment extends ListFragment {
         super.onActivityCreated(savedInstanceState);
 
         //TODO: read favourites cities from sql!
-        adapter=new CitiesListAdapter(getActivity(), android.R.id.list);
-        adapter.add(new City(702550, "Lviv", "UA"));
-        setListAdapter(adapter);
+        if(adapter == null)
+        {
+            adapter=new CitiesListAdapter(getActivity(), android.R.id.list);
+            adapter.add(new City(702550, "Lviv", "UA"));//hardcode
+            setListAdapter(adapter);
+        }
+
     }
 
     @Override
@@ -75,6 +79,16 @@ public class MenuFragment extends ListFragment {
             throw new ClassCastException(getActivity().toString()
                     + " must implement IActionUI");
         }
-
     }
+
+    public void addCity(City city){
+        adapter.add(city);
+        adapter.notifyDataSetChanged();
+    }
+
+    public void delCity(City city){
+        adapter.remove(city);
+        adapter.notifyDataSetChanged();
+    }
+
 }

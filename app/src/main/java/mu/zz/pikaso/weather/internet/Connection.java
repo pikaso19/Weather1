@@ -60,6 +60,7 @@ public class Connection  {
         Call<JsonObject> citiesJSON = openWeatherService.getAvailableCities(cityPattern);
         try {
             Response jsonObjectResponse = citiesJSON.execute();
+            //Log.d("0k19vej5ug",jsonObjectResponse.raw().request().urlString());
             JsonArray jArr = ((JsonObject) jsonObjectResponse.body()).getAsJsonArray("list");
             for (int i=0; i < jArr.size(); i++) {
                 JsonObject obj = jArr.get(i).getAsJsonObject();
@@ -88,7 +89,6 @@ public class Connection  {
         Call<JsonObject> forecastJSON = openWeatherService.getForecast16(cityID);
         try {
             Response jsonObjectResponse = forecastJSON.execute();
-            Log.d("0k19vej5ug",jsonObjectResponse.raw().request().urlString());
             JsonArray jArr = ((JsonObject) jsonObjectResponse.body()).getAsJsonArray("list");
             for(int i=0;i<jArr.size();i++){
                 Weather weather = new Weather();

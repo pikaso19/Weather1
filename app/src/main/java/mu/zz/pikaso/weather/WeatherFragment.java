@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,11 @@ public class WeatherFragment extends Fragment {
     private static final String ARG_PARAM2 = "id";
     private String mParam1;                             //city name
     private int mParam2;                                //city id
+
+    TextView title;
+    ImageButton menu;
+    ImageButton refresh;
+    RecyclerView recyclerView;
 
     public static WeatherFragment newInstance(String cityName, int id) {
         WeatherFragment fragment = new WeatherFragment();
@@ -59,10 +65,10 @@ public class WeatherFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
         try {
-            final TextView title = (TextView) getView().findViewById(R.id.cityname);
-            final ImageButton menu = (ImageButton) getView().findViewById(R.id.btnMenu);
-            final ImageButton refresh = (ImageButton) getView().findViewById(R.id.btnResfresh);
-            final RecyclerView recyclerView = (RecyclerView) getView().findViewById(R.id.recyclerView);
+            title = (TextView) getView().findViewById(R.id.cityname);
+            menu = (ImageButton) getView().findViewById(R.id.btnMenu);
+            refresh = (ImageButton) getView().findViewById(R.id.btnResfresh);
+            recyclerView = (RecyclerView) getView().findViewById(R.id.recyclerView);
 
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
             recyclerView.setLayoutManager(layoutManager);
