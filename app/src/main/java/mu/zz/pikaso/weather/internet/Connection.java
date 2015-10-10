@@ -1,13 +1,19 @@
 package mu.zz.pikaso.weather.internet;
 
+import android.util.Log;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import mu.zz.pikaso.weather.pojo.CurrentWeather;
+import mu.zz.pikaso.weather.representations.City;
+import mu.zz.pikaso.weather.representations.Weather;
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
 import retrofit.Response;
@@ -33,9 +39,9 @@ public class Connection  {
     /*
      *  Get current weather
      */
-    public CurrentWeather test(){
-        WeatherAPI weatherService = retrofit.create(WeatherAPI.class);
-        Call<CurrentWeather> weatherCall = weatherService.getCurrentWeather("Lviv");
+    public CurrentWeather getCurrentWeather(int cityID){
+        WeatherAPI openWeatherService = retrofit.create(WeatherAPI.class);
+        Call<CurrentWeather> weatherCall = openWeatherService.getCurrentWeather(cityID);
         try {
             Response<CurrentWeather> currentWeather = weatherCall.execute();
             return currentWeather.body();
@@ -48,21 +54,23 @@ public class Connection  {
     /*
      *  Search and Get available cities in openweather
      */
-    public List<String> getCitiesList(String cityPattern){
-        List<String> citiesMatch = new ArrayList<String>();
-        WeatherAPI weatherService = retrofit.create(WeatherAPI.class);
-        Call<JsonObject> citiesJSON = weatherService.getAvailableCities(cityPattern);
+    public List<City> getCitiesList(String cityPattern){
+        List<City> citiesMatch = new ArrayList<City>();
+        WeatherAPI openWeatherService = retrofit.create(WeatherAPI.class);
+        Call<JsonObject> citiesJSON = openWeatherService.getAvailableCities(cityPattern);
         try {
             Response jsonObjectResponse = citiesJSON.execute();
             JsonArray jArr = ((JsonObject) jsonObjectResponse.body()).getAsJsonArray("list");
             for (int i=0; i < jArr.size(); i++) {
-               String city = new String();
                 JsonObject obj = jArr.get(i).getAsJsonObject();
-
+                City city = new City();
+                Integer id = obj.get("id").getAsInt();
+                city.setId(id);
                 String name = obj.get("name").getAsString();
+                city.setName(name);
                 JsonObject sys = obj.get("sys").getAsJsonObject();
                 String country = sys.get("country").getAsString();
-                city = name +", " + country;
+                city.setCountry(country);
 
                 citiesMatch.add(city);
             }
@@ -74,5 +82,48 @@ public class Connection  {
     }
 
 
+    public List<Weather> getWeatherForecast(int cityID){
+        List<Weather> forecast = new ArrayList<Weather>();
+        WeatherAPI openWeatherService = retrofit.create(WeatherAPI.class);
+        Call<JsonObject> forecastJSON = openWeatherService.getForecast16(cityID);
+        try {
+            Response jsonObjectResponse = forecastJSON.execute();
+            Log.d("0k19vej5ug",jsonObjectResponse.raw().request().urlString());
+            JsonArray jArr = ((JsonObject) jsonObjectResponse.body()).getAsJsonArray("list");
+            for(int i=0;i<jArr.size();i++){
+                Weather weather = new Weather();
+                JsonObject obj = jArr.get(i).getAsJsonObject();
+                long dates = obj.get("dt").getAsLong();
+                JsonObject tempObj = obj.get("temp").getAsJsonObject();
+                double day = tempObj.get("day").getAsDouble();
+                double min = tempObj.get("min").getAsDouble();
+                double max = tempObj.get("max").getAsDouble();
+                double night = tempObj.get("night").getAsDouble();
+                double eve = tempObj.get("eve").getAsDouble();
+                double morn = tempObj.get("morn").getAsDouble();
+                JsonArray weatherArr = obj.getAsJsonArray("weather");
+                String description = weatherArr.get(0).getAsJsonObject().get("description").getAsString();
+                String icon = weatherArr.get(0).getAsJsonObject().get("icon").getAsString();
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(dates*1000L);
+                weather.setDate(calendar);
+                weather.setDay(day);
+                weather.setMin(min);
+                weather.setMax(max);
+                weather.setNight(night);
+                weather.setEve(eve);
+                weather.setMorn(morn);
+                weather.setDescription(description);
+                weather.setImage(icon);
+
+                forecast.add(weather);
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
+        return forecast;
+    }
 }
 

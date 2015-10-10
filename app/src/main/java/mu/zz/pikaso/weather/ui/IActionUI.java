@@ -1,5 +1,9 @@
 package mu.zz.pikaso.weather.ui;
 
+import android.support.v7.widget.RecyclerView;
+
+import mu.zz.pikaso.weather.representations.City;
+
 /**
  * Created by pikaso on 30.09.2015.
  */
@@ -9,12 +13,12 @@ public interface IActionUI {
     void onClickAddCity();
     void onClickExit();
 
-    void onCitySelected(String city);
-    void onCityDelete(String city);
+    void onCitySelected(City city);
+    void onCityDelete(City city);
 
     //fragment 2
-    void onClickRefresh();
+    void onClickRefresh(RecyclerView rw, int id);
 
     //fragment 3
-    void onCityAdd(String city);
+    void onCityAdd(City city);
 }

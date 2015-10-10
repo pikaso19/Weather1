@@ -1,14 +1,21 @@
 package mu.zz.pikaso.weather.adapters;
 
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 import mu.zz.pikaso.weather.R;
 import mu.zz.pikaso.weather.representations.Weather;
@@ -17,11 +24,17 @@ import mu.zz.pikaso.weather.representations.Weather;
  * Created by pikaso on 04.10.2015.
  */
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherHolder> {
-    private ArrayList<Weather> weatherDataset;
+    private List<Weather> weatherDataset;
+    private Activity activity;
 
-    public void setWeatherDataset(ArrayList<Weather> weatherDataset){
+    public void setWeatherDataset(List<Weather> weatherDataset){
         this.weatherDataset = weatherDataset;
     }
+
+    public void setActivity(Activity activity){
+        this.activity = activity;
+    }
+
 
     public static class WeatherHolder extends RecyclerView.ViewHolder {
         private ImageView image;
@@ -34,10 +47,9 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherH
             super(itemView);
             date = (TextView) itemView.findViewById(R.id.txtDate);
             image = (ImageView) itemView.findViewById(R.id.imgState);
-            text1 = (TextView) itemView.findViewById(R.id.txtTemperature1);
-            text2 = (TextView) itemView.findViewById(R.id.txtTemperature2);
-            text3 = (TextView) itemView.findViewById(R.id.txtDescription);
-
+            text1 = (TextView) itemView.findViewById(R.id.wlText1);
+            text2 = (TextView) itemView.findViewById(R.id.wlText2);
+            text3 = (TextView) itemView.findViewById(R.id.wlText3);
         }
     }
 
@@ -57,12 +69,16 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherH
         TextView text2 = holder.text2;
         TextView text3 = holder.text3;
 
-        SimpleDateFormat iso = new SimpleDateFormat(
-                "dd-MM-yy");
-        date.setText(iso.format(weatherDataset.get(position).getDate()));
-        image.setImageResource(weatherDataset.get(position).getImage());
-        text1.setText(String.valueOf(weatherDataset.get(position).getCurrentTemperature()) + " °C");
-        text2.setText("from " + String.valueOf(weatherDataset.get(position).getMinTemperature()) +" to "+ String.valueOf(weatherDataset.get(position).getMaxTemperature()) +" °C");
+        SimpleDateFormat iso = new SimpleDateFormat("EEE, d MMM yyyy");
+        date.setText(iso.format(weatherDataset.get(position).getDate().getTime()));
+
+        Glide.with(activity).load(weatherDataset.get(position).getImage())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.umbrella)//TODO: change to no_image
+                .into(image);
+
+        text1.setText(String.valueOf(weatherDataset.get(position).getDay()) + "° ("+weatherDataset.get(position).getMin()+"°|"+weatherDataset.get(position).getMax()+"°)");
+        text2.setText("Night: " + weatherDataset.get(position).getNight() +"°; Morning: "+ weatherDataset.get(position).getMorn() +"°; Evening: "+weatherDataset.get(position).getEve()+"°");
         text3.setText(weatherDataset.get(position).getDescription());
     }
 

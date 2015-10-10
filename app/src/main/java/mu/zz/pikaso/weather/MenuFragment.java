@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,31 +19,18 @@ import mu.zz.pikaso.weather.ui.IActionUI;
  * A placeholder fragment containing a simple view.
  */
 public class MenuFragment extends ListFragment {
-    private Button btnRefreshAll = null;
-    private Button btnAddCity = null;
-    private Button btnExit = null;
-
-    public MenuFragment() {
-    }
-
+    private CitiesListAdapter adapter;
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        btnRefreshAll = (Button) getView().findViewById(R.id.btnRefreshAll);
-        btnAddCity = (Button) getView().findViewById(R.id.btnAddCity);
-        btnExit = (Button) getView().findViewById(R.id.btnExit);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_menu,
+                container, false);
 
-/*      // how i get current weather
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                (new ShowWeather(editText1)).execute();
-            }
-        });
-*/
-
-        /* -------- BUTTONS CLICK LISTENERS -------- */
+        final Button btnRefreshAll = (Button) rootView.findViewById(R.id.btnRefreshAll);
+        final Button btnAddCity = (Button) rootView.findViewById(R.id.btnAddCity);
+        final Button btnExit = (Button) rootView.findViewById(R.id.btnExit);
+         /* -------- BUTTONS CLICK LISTENERS -------- */
         btnRefreshAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,27 +52,17 @@ public class MenuFragment extends ListFragment {
             }
         });
 
+
+        return rootView;
     }
 
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_menu, null, true);
-    }
-
-    List<City> cities = new ArrayList<City>();
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         //TODO: read favourites cities from sql!
-        cities.clear();
-        cities.add(new City(0,"Lviv",R.drawable.noflag));
-        cities.add(new City(1,"Kyiv",R.drawable.noflag));
-        cities.add(new City(3,"London",R.drawable.noflag));
-
-        CitiesListAdapter adapter=new CitiesListAdapter(getActivity(), cities);
+        adapter=new CitiesListAdapter(getActivity(), android.R.id.list);
+        adapter.add(new City(702550, "Lviv", "UA"));
         setListAdapter(adapter);
     }
 
@@ -94,7 +70,7 @@ public class MenuFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         try{
-            ((IActionUI) getActivity()).onCitySelected(cities.get(position).getName());
+            ((IActionUI) getActivity()).onCitySelected( adapter.getItem(position) );
         } catch (ClassCastException e) {
             throw new ClassCastException(getActivity().toString()
                     + " must implement IActionUI");

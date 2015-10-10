@@ -20,7 +20,7 @@ public class ShowWeather extends AsyncTask<Void,Void,CurrentWeather> {
         CurrentWeather b = new CurrentWeather();
         try {
             Connection a = new Connection();
-            b = a.test();
+            b = a.getCurrentWeather(702550);//hardcode
         } catch (Exception e) {
             e.printStackTrace();
         }

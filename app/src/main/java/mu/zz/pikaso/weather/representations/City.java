@@ -6,12 +6,15 @@ package mu.zz.pikaso.weather.representations;
 public class City {
     private int id;
     private String name;
-    private Integer flag;
+    private String country;
 
-    public City(int id, String name, Integer flag){
+    public City(){}
+
+
+    public City(int id, String name, String country){
         this.id = id;
         this.name = name;
-        this.flag = flag;
+        this.country = country;
     }
 
     public String getName() {
@@ -30,12 +33,21 @@ public class City {
         this.id = id;
     }
 
-    public Integer getFlag() {
-        return flag;
+    public String getFlagURL() {
+        return "http://openweathermap.org/images/flags/"+country.toLowerCase()+".png";
     }
 
-    public void setFlag(Integer flag) {
-        this.flag = flag;
+    public String getCountry() {
+        return country;
     }
 
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+
+    @Override
+    public String toString() {
+        return name+","+country;
+    }
 }

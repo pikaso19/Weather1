@@ -14,24 +14,22 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import mu.zz.pikaso.weather.adapters.WeatherAdapter;
+import mu.zz.pikaso.weather.representations.City;
 import mu.zz.pikaso.weather.representations.Weather;
 import mu.zz.pikaso.weather.ui.IActionUI;
 
 
 public class WeatherFragment extends Fragment {
-
     private static final String ARG_PARAM1 = "city";
-    private String mParam1;
+    private static final String ARG_PARAM2 = "id";
+    private String mParam1;                             //city name
+    private int mParam2;                                //city id
 
-    ImageButton menu;
-    ImageButton refresh;
-    TextView title;
-    RecyclerView recyclerView;
-
-    public static WeatherFragment newInstance(String cityName) {
+    public static WeatherFragment newInstance(String cityName, int id) {
         WeatherFragment fragment = new WeatherFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, cityName);
+        args.putInt(ARG_PARAM2, id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,6 +43,7 @@ public class WeatherFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getInt(ARG_PARAM2);
         }
 
     }
@@ -59,53 +58,43 @@ public class WeatherFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
-        title = (TextView) getView().findViewById(R.id.cityname);
-        menu = (ImageButton) getView().findViewById(R.id.btnMenu);
-        refresh = (ImageButton) getView().findViewById(R.id.btnResfresh);
-        recyclerView = (RecyclerView) getView().findViewById(R.id.recyclerView);
+        try {
+            final TextView title = (TextView) getView().findViewById(R.id.cityname);
+            final ImageButton menu = (ImageButton) getView().findViewById(R.id.btnMenu);
+            final ImageButton refresh = (ImageButton) getView().findViewById(R.id.btnResfresh);
+            final RecyclerView recyclerView = (RecyclerView) getView().findViewById(R.id.recyclerView);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
-        recyclerView.setLayoutManager(layoutManager);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
+            recyclerView.setLayoutManager(layoutManager);
 
-        WeatherAdapter weatherAdapter = new WeatherAdapter();
-        ArrayList<Weather> weathers = new ArrayList<Weather>(1);
+            WeatherAdapter weatherAdapter = new WeatherAdapter();
+            weatherAdapter.setWeatherDataset(new ArrayList<Weather>());
+            weatherAdapter.setActivity(getActivity());
+            recyclerView.setAdapter(weatherAdapter);
 
-        Weather weatherToday = new Weather();
-        weatherToday.setCurrentTemperature(+17.2);
-        weatherToday.setDate(new java.sql.Date(2015,03,12));
-        weatherToday.setDescription("some clouds");
-        weatherToday.setFlag(R.drawable.umbrella);
-        weatherToday.setId(0);
-        weatherToday.setImage(R.drawable.umbrella);
-        weatherToday.setMaxTemperature(23);
-        weatherToday.setMinTemperature(15);
-        weatherToday.setName("Lviv");
+            title.setText(mParam1);
 
-        weathers.add(weatherToday);
-
-        weatherAdapter.setWeatherDataset(weathers);
-        recyclerView.setAdapter(weatherAdapter);
-
-        title.setText(mParam1);
-
-        menu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().onBackPressed();
-            }
-        });
-
-        refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    ((IActionUI) getActivity()).onClickRefresh();
-                } catch (ClassCastException e) {
-                    throw new ClassCastException(getActivity().toString()
-                            + " must implement IActionUI");
+            menu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getActivity().onBackPressed();
                 }
-            }
-        });
+            });
+
+            refresh.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        ((IActionUI) getActivity()).onClickRefresh(recyclerView, mParam2);
+                    } catch (ClassCastException e) {
+                        throw new ClassCastException(getActivity().toString()
+                                + " must implement IActionUI");
+                    }
+                }
+            });
+        }catch(NullPointerException e){
+            e.printStackTrace();
+        }
     }
 
 

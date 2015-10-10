@@ -15,6 +15,8 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import mu.zz.pikaso.weather.adapters.CitiesListAdapter;
+import mu.zz.pikaso.weather.representations.City;
 import mu.zz.pikaso.weather.ui.SearchCityTask;
 import mu.zz.pikaso.weather.ui.IActionUI;
 
@@ -22,18 +24,18 @@ import mu.zz.pikaso.weather.ui.IActionUI;
  * Created by pikaso on 06.10.2015.
  */
 public class AddCityFragmentDialog extends DialogFragment {
-    private String selectedCity;
+    private City selectedCity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        selectedCity = "";
+        selectedCity = new City();
         getDialog().setCanceledOnTouchOutside(true);
 
         View v = inflater.inflate(R.layout.fragment_addcity, null);
 
         final ListView listCities = (ListView) v.findViewById(R.id.listCities);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<String>());
+        ArrayAdapter<City> adapter = new ArrayAdapter<City>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<City>());
         listCities.setAdapter(adapter);
 
         final EditText edt = (EditText) v.findViewById(R.id.edDSearch);
@@ -54,8 +56,7 @@ public class AddCityFragmentDialog extends DialogFragment {
         listCities.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectedCity = (String) listCities.getItemAtPosition(position);
-                selectedCity = selectedCity.substring(0,selectedCity.indexOf(","));
+                selectedCity = (City) listCities.getItemAtPosition(position);
                 listCities.setItemChecked(position, true);
             }
         });

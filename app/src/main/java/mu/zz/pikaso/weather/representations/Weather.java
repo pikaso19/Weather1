@@ -1,84 +1,78 @@
 package mu.zz.pikaso.weather.representations;
 
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * Created by pikaso on 03.10.2015.
  */
 public class Weather {
-    private String name;
-    private int flag;                   //image code "country flag"
-    private double minTemperature;
-    private double currentTemperature;
-    private double maxTemperature;
-    private Date date;
+    private Calendar date;
+
+    private double day;
+    private double min;
+    private double max;
+    private double night;
+    private double eve;
+    private double morn;
+
     private String description;
-    private int image;                  //image code "weather state"
+    private String image;                  //image file name "weather state"
 
-    private  int id;
 
-    public String getName() {
-        return name;
+    public double getDay() {
+        return day;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDay(double day) {
+        this.day = day;
     }
 
-    public int getFlag() {
-        return flag;
+    public double getMin() {
+        return min;
     }
 
-    public void setFlag(int flag) {
-        this.flag = flag;
+    public void setMin(double min) {
+        this.min = min;
     }
 
-    public double getMinTemperature() {
-        return minTemperature;
+    public double getMax() {
+        return max;
     }
 
-    public void setMinTemperature(double minTemperature) {
-        this.minTemperature = minTemperature;
+    public void setMax(double max) {
+        this.max = max;
     }
 
-    public double getCurrentTemperature() {
-        return currentTemperature;
+    public double getNight() {
+        return night;
     }
 
-    public void setCurrentTemperature(double currentTemperature) {
-        this.currentTemperature = currentTemperature;
+    public void setNight(double night) {
+        this.night = night;
     }
 
-    public double getMaxTemperature() {
-        return maxTemperature;
+    public double getEve() {
+        return eve;
     }
 
-    public void setMaxTemperature(double maxTemperature) {
-        this.maxTemperature = maxTemperature;
+    public void setEve(double eve) {
+        this.eve = eve;
     }
 
-    public Date getDate() {
+    public double getMorn() {
+        return morn;
+    }
+
+    public void setMorn(double morn) {
+        this.morn = morn;
+    }
+
+    public Calendar getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Calendar date) {
         this.date = date;
-    }
-
-    public int getImage() {
-        return image;
-    }
-
-    public void setImage(int image) {
-        this.image = image;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getDescription() {
@@ -87,5 +81,13 @@ public class Weather {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImage() {
+        return "http://openweathermap.org/img/w/"+image+".png";
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
