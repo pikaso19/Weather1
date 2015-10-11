@@ -40,11 +40,8 @@ public class RecvForecastTask extends AsyncTask<Void,Void,Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         //UPDATE
-        //((WeatherAdapter)recyclerView.getAdapter()).clear();
         if(forecast.size()>0){
             ((WeatherAdapter)recyclerView.getAdapter()).setWeatherDataset(forecast);
-        }else{
-            //nothing
         }
         ((WeatherAdapter)recyclerView.getAdapter()).notifyDataSetChanged();
     }

@@ -1,17 +1,17 @@
 package mu.zz.pikaso.weather;
 
 
-import android.content.Context;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
+import mu.zz.pikaso.weather.internet.Connection;
 import mu.zz.pikaso.weather.representations.City;
 import mu.zz.pikaso.weather.ui.IActionUI;
 import mu.zz.pikaso.weather.ui.RecvForecastTask;
@@ -89,7 +89,6 @@ public class MainActivity extends FragmentActivity implements IActionUI{
     @Override
     public void onClickExit() {
         finish();
-        System.exit(0);
     }
 
     @Override
@@ -111,8 +110,16 @@ public class MainActivity extends FragmentActivity implements IActionUI{
     @Override
     public void onClickRefresh(RecyclerView rw, int id) {
         //TODO: refresh weather for current city
-        RecvForecastTask task = new RecvForecastTask(rw,id);
-        task.execute();
+        if(Connection.isInternetAvailable(this)) {
+            //before doing something check internet connection
+            Log.d("0k19vej5ug","Internet available!");
+            RecvForecastTask task = new RecvForecastTask(rw,id);
+            task.execute();
+        }else{
+            Log.d("0k19vej5ug","Internet unreachable!");
+            Toast.makeText(this.getApplicationContext(), "There NO INTERNET connection available!", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     /*
@@ -121,7 +128,6 @@ public class MainActivity extends FragmentActivity implements IActionUI{
 
     @Override
     public void onCityAdd(City city) {
-        Log.d("0k19vej5ug", "Selected city: "+city.getName()+"\n");
         menuFragment.addCity(city);
         dialogFragment.dismiss();
     }

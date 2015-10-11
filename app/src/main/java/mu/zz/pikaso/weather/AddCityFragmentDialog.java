@@ -12,10 +12,12 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import mu.zz.pikaso.weather.adapters.CitiesListAdapter;
+import mu.zz.pikaso.weather.internet.Connection;
 import mu.zz.pikaso.weather.representations.City;
 import mu.zz.pikaso.weather.ui.SearchCityTask;
 import mu.zz.pikaso.weather.ui.IActionUI;
@@ -27,7 +29,7 @@ public class AddCityFragmentDialog extends DialogFragment {
     private City selectedCity;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         selectedCity = new City();
         getDialog().setCanceledOnTouchOutside(true);
@@ -44,11 +46,16 @@ public class AddCityFragmentDialog extends DialogFragment {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (edt.getText().toString().length() > 2) {
-                    SearchCityTask task = new SearchCityTask(listCities);
-                    String cityPattern = edt.getText().toString();
-                    task.setPattern(cityPattern);
-                    task.execute();
+                if(Connection.isInternetAvailable(getContext())) {
+                    //before doing something check internet connection
+                    if (edt.getText().toString().length() > 2) {
+                        SearchCityTask task = new SearchCityTask(listCities);
+                        String cityPattern = edt.getText().toString();
+                        task.setPattern(cityPattern);
+                        task.execute();
+                    }
+                }else{
+                    Toast.makeText(getContext(),"There NO INTERNET connection available!",Toast.LENGTH_LONG).show();
                 }
             }
         });

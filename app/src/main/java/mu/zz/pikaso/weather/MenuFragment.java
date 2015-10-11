@@ -9,9 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import mu.zz.pikaso.weather.adapters.CitiesListAdapter;
 import mu.zz.pikaso.weather.representations.City;
 import mu.zz.pikaso.weather.ui.IActionUI;
@@ -82,13 +79,17 @@ public class MenuFragment extends ListFragment {
     }
 
     public void addCity(City city){
-        adapter.add(city);
-        adapter.notifyDataSetChanged();
+        if(city != null){
+            adapter.add(city);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     public void delCity(City city){
-        adapter.remove(city);
-        adapter.notifyDataSetChanged();
+        if(city != null) {
+            adapter.remove(city);
+            adapter.notifyDataSetChanged();
+        }
     }
 
 }
