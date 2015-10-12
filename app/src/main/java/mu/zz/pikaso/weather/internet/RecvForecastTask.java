@@ -1,4 +1,4 @@
-package mu.zz.pikaso.weather.ui;
+package mu.zz.pikaso.weather.internet;
 
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
@@ -11,20 +11,21 @@ import mu.zz.pikaso.weather.adapters.WeatherAdapter;
 import mu.zz.pikaso.weather.internet.Connection;
 import mu.zz.pikaso.weather.representations.City;
 import mu.zz.pikaso.weather.representations.Weather;
+import mu.zz.pikaso.weather.ui.IActionUI;
 
 
 /**
  * Created by pikaso on 08.10.2015.
  */
 public class RecvForecastTask extends AsyncTask<Void,Void,Void> {
-    private RecyclerView recyclerView;
     private List<Weather> forecast;
+    private IActionUI context;
     private int cityId;
 
-    public RecvForecastTask(RecyclerView recyclerView, int id){
+    public RecvForecastTask(int id, IActionUI context){
         super();
-        this.recyclerView = recyclerView;
-        forecast = new ArrayList<Weather>();
+        this.context = context;
+        forecast = new ArrayList<Weather>(16);
         cityId = id;
     }
 
@@ -39,11 +40,7 @@ public class RecvForecastTask extends AsyncTask<Void,Void,Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        //UPDATE
-        if(forecast.size()>0){
-            
-            ((WeatherAdapter)recyclerView.getAdapter()).setWeatherDataset(forecast);
-        }
-        ((WeatherAdapter)recyclerView.getAdapter()).notifyDataSetChanged();
+        //activate event
+        context.readyWeather(forecast,cityId);
     }
 }

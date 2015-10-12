@@ -83,8 +83,12 @@ public class Weather {
         this.description = description;
     }
 
-    public String getImage() {
+    public String getImageURL() {
         return "http://openweathermap.org/img/w/"+image+".png";
+    }
+
+    public String getImage(){
+        return image;
     }
 
     public void setImage(String image) {

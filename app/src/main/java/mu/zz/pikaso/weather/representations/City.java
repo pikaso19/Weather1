@@ -1,5 +1,7 @@
 package mu.zz.pikaso.weather.representations;
 
+import mu.zz.pikaso.weather.tools.CountryCodes;
+
 /**
  * Created by pikaso on 03.10.2015.
  */
@@ -8,13 +10,19 @@ public class City {
     private String name;
     private String country;
 
+
     public City(){}
 
 
     public City(int id, String name, String country){
         this.id = id;
         this.name = name;
-        this.country = country;
+        if(country.length()>2){
+            CountryCodes a = new CountryCodes();
+            this.country = a.getCode(country);
+        }else{
+            this.country = country;
+        }
     }
 
     public String getName() {
@@ -34,7 +42,14 @@ public class City {
     }
 
     public String getFlagURL() {
-        return "http://openweathermap.org/images/flags/"+country.toLowerCase()+".png";
+        String s = "";
+        if(country.length()>2){
+            CountryCodes a = new CountryCodes();
+            s = a.getCode(country);
+        }else{
+            s = country;
+        }
+        return "http://openweathermap.org/images/flags/"+s.toLowerCase()+".png";//hardcode!
     }
 
     public String getCountry() {
@@ -44,7 +59,6 @@ public class City {
     public void setCountry(String country) {
         this.country = country;
     }
-
 
     @Override
     public String toString() {

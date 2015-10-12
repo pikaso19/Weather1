@@ -11,11 +11,17 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import mu.zz.pikaso.weather.internet.Connection;
 import mu.zz.pikaso.weather.representations.City;
+import mu.zz.pikaso.weather.representations.Weather;
 import mu.zz.pikaso.weather.sql.DataBaseHelper;
+import mu.zz.pikaso.weather.sql.LoadCitiesTask;
+import mu.zz.pikaso.weather.sql.LoadWeatherTask;
 import mu.zz.pikaso.weather.ui.IActionUI;
-import mu.zz.pikaso.weather.ui.RecvForecastTask;
+import mu.zz.pikaso.weather.internet.RecvForecastTask;
 
 public class MainActivity extends FragmentActivity implements IActionUI{
     private WeatherFragment weatherFragment;
@@ -28,7 +34,14 @@ public class MainActivity extends FragmentActivity implements IActionUI{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dataBase = new DataBaseHelper(getApplicationContext());
+        try {
+            dataBase = new DataBaseHelper(getApplicationContext());
+        }catch (Exception e) {
+            Log.d("0k19vej5ug", "[FORCE] Database delete");
+            deleteDatabase(DataBaseHelper.DATABASE_NAME); // delete DataBase
+            Log.d("0k19vej5ug", "[FORCE] Database create!");
+            dataBase = new DataBaseHelper(getApplicationContext());
+        }
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
@@ -83,7 +96,7 @@ public class MainActivity extends FragmentActivity implements IActionUI{
         //TODO: Get weather forecast for favourites cities
 
         this.deleteDatabase(DataBaseHelper.DATABASE_NAME); // delete DataBase
-        Log.d("0k19vej5ug","Database deleted!");
+        Log.d("0k19vej5ug", "Database deleted!");
     }
 
     @Override
@@ -99,14 +112,31 @@ public class MainActivity extends FragmentActivity implements IActionUI{
 
     @Override
     public void onCitySelected(City city) {
-        //TODO: call weather fragment
         weatherFragment = WeatherFragment.newInstance(city.getName(),city.getId());
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment, weatherFragment).addToBackStack(null).commit();
+        //now load async forecast
+        LoadWeatherTask task = new LoadWeatherTask(dataBase, city.getId(), this);
+        task.execute();
     }
 
     @Override
     public void onCityDelete(City city) {
         //TODO: delete city on long press
+    }
+
+    @Override
+    public void loadCities(){
+        LoadCitiesTask task = new LoadCitiesTask(dataBase, this);
+        task.execute();
+    }
+
+    @Override
+    public void displayCities(List<City> cities) {
+        if(!cities.isEmpty()){
+            for (City city: cities) {
+                menuFragment.addCity(city);
+            }
+        }
     }
 
     /*
@@ -119,13 +149,43 @@ public class MainActivity extends FragmentActivity implements IActionUI{
         if(Connection.isInternetAvailable(this)) {
             //before doing something check internet connection
             Log.d("0k19vej5ug","Internet available!");
-            RecvForecastTask task = new RecvForecastTask(rw,id);
+            RecvForecastTask task = new RecvForecastTask(id, this);
             task.execute();
         }else{
-            Log.d("0k19vej5ug","Internet unreachable!");
+            Log.d("0k19vej5ug", "Internet unreachable!");
             Toast.makeText(this.getApplicationContext(), "There NO INTERNET connection available!", Toast.LENGTH_LONG).show();
         }
+    }
 
+    @Override
+    public void readyWeather(List<Weather> forecast, long cityID){
+        if(!forecast.isEmpty()){
+            weatherFragment.DisplayWeather(forecast);
+
+            //TODO: seperate with task
+            List<Long> weatherIDs = new ArrayList<Long>(16);
+            //delete prev.
+            dataBase.Weather.deleteByCity(cityID);
+            //add new
+            for (Weather w: forecast) {
+                weatherIDs.add(dataBase.Weather.insert(w,cityID));
+            }
+            //TODO: update WLU & FLU in CityTable
+        }
+    }
+
+    @Override
+    public void displayForecast(List<Weather> forecast) {
+        if(forecast != null){
+            if(!forecast.isEmpty()){
+                for (Weather w: forecast) {
+                    //TODO: change to single item ading
+                    //weatherFragment.add(w);
+                }
+            }
+        }
+        //after refactor delete this
+        weatherFragment.DisplayWeather(forecast);
     }
 
     /*
@@ -142,4 +202,10 @@ public class MainActivity extends FragmentActivity implements IActionUI{
 
         dialogFragment.dismiss();
     }
+
+
+
+
+
+
 }

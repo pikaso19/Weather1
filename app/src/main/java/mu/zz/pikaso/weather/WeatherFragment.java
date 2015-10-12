@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import mu.zz.pikaso.weather.adapters.WeatherAdapter;
 import mu.zz.pikaso.weather.representations.City;
@@ -103,5 +104,13 @@ public class WeatherFragment extends Fragment {
         }
     }
 
+    void DisplayWeather(List<Weather> forecast){
+        if(forecast.size()>0){
+            Log.d("0k19vej5ug", "setting weather list!");
+            ((WeatherAdapter)recyclerView.getAdapter()).setWeatherDataset(forecast);
+        }
+        Log.d("0k19vej5ug", "updating weather list!");
+        ((WeatherAdapter)recyclerView.getAdapter()).notifyDataSetChanged();
+    }
 
 }

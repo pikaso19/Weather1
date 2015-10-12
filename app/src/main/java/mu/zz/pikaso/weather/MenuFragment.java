@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 
+import java.util.List;
+
 import mu.zz.pikaso.weather.adapters.CitiesListAdapter;
 import mu.zz.pikaso.weather.representations.City;
 import mu.zz.pikaso.weather.ui.IActionUI;
@@ -61,9 +63,18 @@ public class MenuFragment extends ListFragment {
         if(adapter == null)
         {
             adapter=new CitiesListAdapter(getActivity(), android.R.id.list);
-            adapter.add(new City(702550, "Lviv", "UA"));//hardcode
+            //adapter.add(new City(702550, "Lviv", "UA"));//hardcode
             setListAdapter(adapter);
+            // LOAD CITIES FROM SQL
+            try{
+                ((IActionUI) getActivity()).loadCities();
+            } catch (ClassCastException e) {
+                throw new ClassCastException(getActivity().toString()
+                        + " must implement IActionUI");
+            }
         }
+
+
 
     }
 
@@ -91,5 +102,6 @@ public class MenuFragment extends ListFragment {
             adapter.notifyDataSetChanged();
         }
     }
+
 
 }

@@ -2,7 +2,6 @@ package mu.zz.pikaso.weather.adapters;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 
 import mu.zz.pikaso.weather.R;
@@ -72,7 +69,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherH
         SimpleDateFormat iso = new SimpleDateFormat("EEE, d MMM yyyy");
         date.setText(iso.format(weatherDataset.get(position).getDate().getTime()));
 
-        Glide.with(activity).load(weatherDataset.get(position).getImage())
+        Glide.with(activity).load(weatherDataset.get(position).getImageURL())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.umbrella)//TODO: change to no_image
                 .into(image);
