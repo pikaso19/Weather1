@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import mu.zz.pikaso.weather.internet.Connection;
 import mu.zz.pikaso.weather.representations.City;
+import mu.zz.pikaso.weather.sql.DataBaseHelper;
 import mu.zz.pikaso.weather.ui.IActionUI;
 import mu.zz.pikaso.weather.ui.RecvForecastTask;
 
@@ -20,12 +21,14 @@ public class MainActivity extends FragmentActivity implements IActionUI{
     private WeatherFragment weatherFragment;
     private MenuFragment menuFragment;
     private AddCityFragmentDialog dialogFragment;
+    private DataBaseHelper dataBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        dataBase = new DataBaseHelper(getApplicationContext());
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
@@ -78,6 +81,9 @@ public class MainActivity extends FragmentActivity implements IActionUI{
     @Override
     public void onClickRefreshALL (){
         //TODO: Get weather forecast for favourites cities
+
+        this.deleteDatabase(DataBaseHelper.DATABASE_NAME); // delete DataBase
+        Log.d("0k19vej5ug","Database deleted!");
     }
 
     @Override
@@ -129,6 +135,11 @@ public class MainActivity extends FragmentActivity implements IActionUI{
     @Override
     public void onCityAdd(City city) {
         menuFragment.addCity(city);
+
+        dataBase.City.insert(city);
+        City a = dataBase.City.select(city.getId());
+        Log.d("0k19vej5ug","Read["+city.getId()+"]: "+a.getName()+a.getCountry()+a.getId());
+
         dialogFragment.dismiss();
     }
 }
