@@ -63,7 +63,6 @@ public class MenuFragment extends ListFragment {
         if(adapter == null)
         {
             adapter=new CitiesListAdapter(getActivity(), android.R.id.list);
-            //adapter.add(new City(702550, "Lviv", "UA"));//hardcode
             setListAdapter(adapter);
             // LOAD CITIES FROM SQL
             try{

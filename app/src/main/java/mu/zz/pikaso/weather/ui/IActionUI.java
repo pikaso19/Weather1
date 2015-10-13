@@ -23,15 +23,18 @@ public interface IActionUI {
     void onCityDelete(City city);
 
     //fragment 2
-    void onClickRefresh(RecyclerView rw, int id);
-    void displayForecast(List<Weather> forecast);
+    void onClickRefresh(RecyclerView rw, long id);
+    void displayForecast(List<Weather> forecast, long cityID);
+    void savedWeather();
+    void savedForecast(long cityID);
 
     //fragment 3
     void onCityAdd(City city);
 
     // events
-    void readyWeather(List<Weather> forecast, long cityID);
+    void readyForecast(List<Weather> forecast, long cityID);
+    void readyWeather(Weather current, long cityID);
+    void readyRefreshALL();
 
-    //SQL
 
 }

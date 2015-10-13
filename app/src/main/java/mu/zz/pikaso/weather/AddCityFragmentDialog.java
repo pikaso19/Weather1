@@ -31,7 +31,7 @@ public class AddCityFragmentDialog extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-        selectedCity = new City();
+        selectedCity = null;
         getDialog().setCanceledOnTouchOutside(true);
 
         View v = inflater.inflate(R.layout.fragment_addcity, null);

@@ -11,15 +11,20 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import mu.zz.pikaso.weather.internet.Connection;
+import mu.zz.pikaso.weather.internet.RecvWeatherTask;
+import mu.zz.pikaso.weather.other.ForecastUpdateThread;
 import mu.zz.pikaso.weather.representations.City;
 import mu.zz.pikaso.weather.representations.Weather;
 import mu.zz.pikaso.weather.sql.DataBaseHelper;
 import mu.zz.pikaso.weather.sql.LoadCitiesTask;
 import mu.zz.pikaso.weather.sql.LoadWeatherTask;
+import mu.zz.pikaso.weather.sql.RefreshAllTask;
+import mu.zz.pikaso.weather.sql.SaveCityTask;
+import mu.zz.pikaso.weather.sql.SaveCurrentWeatherTask;
+import mu.zz.pikaso.weather.sql.SaveForecastTask;
 import mu.zz.pikaso.weather.ui.IActionUI;
 import mu.zz.pikaso.weather.internet.RecvForecastTask;
 
@@ -34,6 +39,7 @@ public class MainActivity extends FragmentActivity implements IActionUI{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //deleteDatabase(DataBaseHelper.DATABASE_NAME); // delete DataBase
         try {
             dataBase = new DataBaseHelper(getApplicationContext());
         }catch (Exception e) {
@@ -95,8 +101,11 @@ public class MainActivity extends FragmentActivity implements IActionUI{
     public void onClickRefreshALL (){
         //TODO: Get weather forecast for favourites cities
 
-        this.deleteDatabase(DataBaseHelper.DATABASE_NAME); // delete DataBase
-        Log.d("0k19vej5ug", "Database deleted!");
+        //this.deleteDatabase(DataBaseHelper.DATABASE_NAME); // delete DataBase
+        //Log.d("0k19vej5ug", "Database deleted!");
+
+        new RefreshAllTask(dataBase, this).execute();
+
     }
 
     @Override
@@ -117,6 +126,7 @@ public class MainActivity extends FragmentActivity implements IActionUI{
         //now load async forecast
         LoadWeatherTask task = new LoadWeatherTask(dataBase, city.getId(), this);
         task.execute();
+
     }
 
     @Override
@@ -139,53 +149,79 @@ public class MainActivity extends FragmentActivity implements IActionUI{
         }
     }
 
+    @Override
+    public void readyRefreshALL() {
+        Toast.makeText(this,"Refresh completed!", Toast.LENGTH_SHORT).show();
+    }
+
     /*
                                                     FRAGMENT 2
     */
 
     @Override
-    public void onClickRefresh(RecyclerView rw, int id) {
+    public void onClickRefresh(RecyclerView rw, long id) {
         //TODO: refresh weather for current city
         if(Connection.isInternetAvailable(this)) {
             //before doing something check internet connection
             Log.d("0k19vej5ug","Internet available!");
             RecvForecastTask task = new RecvForecastTask(id, this);
             task.execute();
-        }else{
+        } else {
             Log.d("0k19vej5ug", "Internet unreachable!");
             Toast.makeText(this.getApplicationContext(), "There NO INTERNET connection available!", Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
-    public void readyWeather(List<Weather> forecast, long cityID){
+    public void readyForecast(List<Weather> forecast, long cityID){
         if(!forecast.isEmpty()){
             weatherFragment.DisplayWeather(forecast);
 
-            //TODO: seperate with task
-            List<Long> weatherIDs = new ArrayList<Long>(16);
-            //delete prev.
-            dataBase.Weather.deleteByCity(cityID);
-            //add new
-            for (Weather w: forecast) {
-                weatherIDs.add(dataBase.Weather.insert(w,cityID));
-            }
+            SaveForecastTask thread = new SaveForecastTask(forecast,cityID,dataBase,this);
+            thread.start();
             //TODO: update WLU & FLU in CityTable
+        }
+
+    }
+
+    @Override
+    public void readyWeather(Weather current, long cityID) {
+        if(current != null){
+            SaveCurrentWeatherTask task = new SaveCurrentWeatherTask(current,cityID,dataBase,this);
+            task.start();
         }
     }
 
     @Override
-    public void displayForecast(List<Weather> forecast) {
+    public void displayForecast(List<Weather> forecast, long cityID) {
         if(forecast != null){
             if(!forecast.isEmpty()){
+                //after refactor delete this
+                Log.d("0k19vej5ug","displayForecast not empty");
+                weatherFragment.DisplayWeather(forecast);
+
                 for (Weather w: forecast) {
                     //TODO: change to single item ading
                     //weatherFragment.add(w);
                 }
+            }else{
+                ForecastUpdateThread thread = new ForecastUpdateThread(cityID,dataBase,this);
+                thread.start();
             }
         }
-        //after refactor delete this
-        weatherFragment.DisplayWeather(forecast);
+
+    }
+
+    @Override
+    public void savedWeather() {
+        Log.d("0k19vej5ug","UPDATE WEATHER");
+
+    }
+
+    @Override
+    public void savedForecast(long cityID) {
+        RecvWeatherTask task = new RecvWeatherTask(cityID, this);
+        task.execute();
     }
 
     /*
@@ -194,13 +230,18 @@ public class MainActivity extends FragmentActivity implements IActionUI{
 
     @Override
     public void onCityAdd(City city) {
-        menuFragment.addCity(city);
+        if(city != null){
+            menuFragment.addCity(city);
 
-        dataBase.City.insert(city);
-        City a = dataBase.City.select(city.getId());
-        Log.d("0k19vej5ug","Read["+city.getId()+"]: "+a.getName()+a.getCountry()+a.getId());
+            //save City in DB
+            SaveCityTask thread = new SaveCityTask(city, dataBase);
+            thread.start();
 
-        dialogFragment.dismiss();
+            dialogFragment.dismiss();
+        }else{
+            Toast.makeText(this, "Press find and choose city from list", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 

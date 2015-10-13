@@ -25,18 +25,18 @@ public class WeatherFragment extends Fragment {
     private static final String ARG_PARAM1 = "city";
     private static final String ARG_PARAM2 = "id";
     private String mParam1;                             //city name
-    private int mParam2;                                //city id
+    private long mParam2;                                //city id
 
     TextView title;
     ImageButton menu;
     ImageButton refresh;
     RecyclerView recyclerView;
 
-    public static WeatherFragment newInstance(String cityName, int id) {
+    public static WeatherFragment newInstance(String cityName, long id) {
         WeatherFragment fragment = new WeatherFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, cityName);
-        args.putInt(ARG_PARAM2, id);
+        args.putLong(ARG_PARAM2, id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,7 +50,7 @@ public class WeatherFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getInt(ARG_PARAM2);
+            mParam2 = getArguments().getLong(ARG_PARAM2);
         }
 
     }

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import mu.zz.pikaso.weather.pojo.CurrentWeather;
 import mu.zz.pikaso.weather.representations.City;
 import mu.zz.pikaso.weather.representations.Weather;
 import retrofit.Call;
@@ -47,12 +46,26 @@ public class Connection  {
     /*
      *  Get current weather
      */
-    public CurrentWeather getCurrentWeather(int cityID){
+    public Weather getCurrentWeather(long cityID){
         WeatherAPI openWeatherService = retrofit.create(WeatherAPI.class);
-        Call<CurrentWeather> weatherCall = openWeatherService.getCurrentWeather(cityID);
+        Call<JsonObject> weatherCall = openWeatherService.getCurrentWeather(cityID);
         try {
-            Response<CurrentWeather> currentWeather = weatherCall.execute();
-            return currentWeather.body();
+            Response jsonObjectResponse = weatherCall.execute();
+            JsonObject obj = ((JsonObject)jsonObjectResponse.body()).getAsJsonObject();
+            JsonArray wObj = obj.get("weather").getAsJsonArray();
+            String description = wObj.get(0).getAsJsonObject().get("description").getAsString();
+            String image = wObj.get(0).getAsJsonObject().get("icon").getAsString();
+            JsonObject mObj = obj.get("main").getAsJsonObject();
+            double temp = mObj.get("temp").getAsDouble();
+            double temp_min = mObj.get("temp_min").getAsDouble();
+            double temp_max = mObj.get("temp_max").getAsDouble();
+
+            Weather current = new Weather();
+            current.setDescription(description);
+            current.setImage(image);
+            current.setDay(temp);
+
+            return current;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -73,7 +86,7 @@ public class Connection  {
             for (int i=0; i < jArr.size(); i++) {
                 JsonObject obj = jArr.get(i).getAsJsonObject();
                 City city = new City();
-                Integer id = obj.get("id").getAsInt();
+                Long id = obj.get("id").getAsLong();
                 city.setId(id);
                 String name = obj.get("name").getAsString();
                 city.setName(name);
@@ -91,7 +104,7 @@ public class Connection  {
     }
 
 
-    public List<Weather> getWeatherForecast(int cityID){
+    public List<Weather> getWeatherForecast(long cityID){
         List<Weather> forecast = new ArrayList<Weather>();
         WeatherAPI openWeatherService = retrofit.create(WeatherAPI.class);
         Call<JsonObject> forecastJSON = openWeatherService.getForecast16(cityID);

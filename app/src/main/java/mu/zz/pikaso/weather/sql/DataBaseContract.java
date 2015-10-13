@@ -97,9 +97,17 @@ public final class DataBaseContract {
 
 
 
+        public static final String UPDATE_WLU = TableCity.COLUMN_NAME_ID + " = ";
+        public static final String UPDATE_FLU = TableCity.COLUMN_NAME_ID + " = ";
+        public static final String UPDATE_CURRENT_WEATHER = TableWeather.COLUMN_NAME_ID + " = ";
+
+
+
         public static final String DELETE_CITY_WHERE_ID = TableCity.COLUMN_NAME_ID + " = ";
         public static final String DELETE_WEATHER_WHERE_ID = TableWeather.COLUMN_NAME_ID + " = ";
         public static final String DELETE_WEATHER_WHERE_CITYID = TableWeather.COLUMN_NAME_CITYID + " = ";
+
+
 
 
 

@@ -6,7 +6,7 @@ import mu.zz.pikaso.weather.tools.CountryCodes;
  * Created by pikaso on 03.10.2015.
  */
 public class City {
-    private int id;
+    private long id;
     private String name;
     private String country;
 
@@ -33,11 +33,11 @@ public class City {
         this.name = name;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
