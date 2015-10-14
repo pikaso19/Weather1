@@ -111,14 +111,6 @@ public class MainActivity extends FragmentActivity implements IActionUI{
     }
 
     @Override
-    public void onClickExit() {
-        // V
-        //TODO: get out this button
-        deleteDatabase(DataBaseHelper.DATABASE_NAME); // delete DataBase
-        finish();
-    }
-
-    @Override
     public void onCitySelected(City city) {
         // V
         weatherFragment = WeatherFragment.newInstance(city.getName(),city.getId());
@@ -133,7 +125,7 @@ public class MainActivity extends FragmentActivity implements IActionUI{
         final IActionUI context = this;
         //TODO: delete city on long press
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Attention");
+        builder.setTitle("Remove "+city.getName()+"?");
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //Start delete task!
@@ -141,7 +133,7 @@ public class MainActivity extends FragmentActivity implements IActionUI{
                 dialog.dismiss();
             }
         });
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
             }
@@ -262,6 +254,8 @@ public class MainActivity extends FragmentActivity implements IActionUI{
                 menuFragment.addCity(city);
                 dialogFragment.dismiss();
             }
+        }else{
+            Toast.makeText(this, "This city already is in your Favourites", Toast.LENGTH_LONG).show();
         }
     }
 

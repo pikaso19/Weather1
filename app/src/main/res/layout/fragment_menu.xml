@@ -67,16 +67,6 @@
             android:textStyle="bold"
             android:typeface="monospace" />
 
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/exit"
-            android:text="Exit"
-            android:id="@+id/btnExit"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:typeface="monospace" />
-
     </LinearLayout>
 
 </RelativeLayout>

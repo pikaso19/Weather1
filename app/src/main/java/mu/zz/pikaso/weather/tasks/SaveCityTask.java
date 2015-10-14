@@ -22,7 +22,8 @@ public class SaveCityTask extends AsyncTask<Void,Void,City> {
 
     @Override
     protected City doInBackground(Void... params) {
-        db.City.insert(city);
+        boolean saved = db.City.insert(city);
+        if(!saved) city = null;
         return city;
     }
 

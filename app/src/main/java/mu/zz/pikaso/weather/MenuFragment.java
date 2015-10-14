@@ -30,7 +30,6 @@ public class MenuFragment extends ListFragment {
 
         final Button btnRefreshAll = (Button) rootView.findViewById(R.id.btnRefreshAll);
         final Button btnAddCity = (Button) rootView.findViewById(R.id.btnAddCity);
-        final Button btnExit = (Button) rootView.findViewById(R.id.btnExit);
          /* -------- BUTTONS CLICK LISTENERS -------- */
         btnRefreshAll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,13 +42,6 @@ public class MenuFragment extends ListFragment {
             @Override
             public void onClick(View v) {
                 ((IActionUI) getActivity()).onClickAddCity();
-            }
-        });
-
-        btnExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((IActionUI) getActivity()).onClickExit();
             }
         });
 

@@ -55,7 +55,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public class TableCity{
         private TableCity(){}
 
-        public void insert(City city){
+        public boolean insert(City city){
             if(!isCityExsist(city.getId())){
                 SQLiteDatabase db = DataBaseHelper.this.getWritableDatabase();
                 // fill data
@@ -66,9 +66,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 // insert row
                 db.insert(DataBaseContract.TableCity.TABLE_NAME, null, values);
                 Log.d("SQLTEST[C]", "DataBase insert City");
-            }else{
-                Log.d("SQLTEST[C]", "DataBase can't insert the City exsist");
+                return true;
             }
+            Log.d("SQLTEST[C]", "DataBase can't insert the City exsist");
+            return false;
         }
 
         public void updateWLU(long cityID){

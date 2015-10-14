@@ -14,7 +14,6 @@ public interface IActionUI {
     //fragment 1
     void onClickRefreshALL();
     void onClickAddCity();
-    void onClickExit();
 
     void loadCities();
     void displayCities(List<City> cities);
