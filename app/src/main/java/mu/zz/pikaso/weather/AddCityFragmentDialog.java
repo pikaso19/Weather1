@@ -16,10 +16,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import mu.zz.pikaso.weather.adapters.CitiesListAdapter;
-import mu.zz.pikaso.weather.internet.Connection;
+import mu.zz.pikaso.weather.tools.Conditions;
 import mu.zz.pikaso.weather.representations.City;
-import mu.zz.pikaso.weather.ui.SearchCityTask;
+import mu.zz.pikaso.weather.tasks.SearchCityTask;
 import mu.zz.pikaso.weather.ui.IActionUI;
 
 /**
@@ -46,7 +45,7 @@ public class AddCityFragmentDialog extends DialogFragment {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Connection.isInternetAvailable(getContext())) {
+                if(Conditions.isInternetAvailable(getContext())) {
                     //before doing something check internet connection
                     if (edt.getText().toString().length() > 2) {
                         SearchCityTask task = new SearchCityTask(listCities);

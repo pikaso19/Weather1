@@ -236,6 +236,8 @@ public class CountryCodes {
         map.put("United Kingdom", "UK");
         map.put("USA Minor Outlying Islands", "UM");
         map.put("United States", "US");
+        map.put("USA", "US");
+        map.put("United States of America", "US");
         map.put("Uruguay", "UY");
         map.put("Uzbekistan", "UZ");
         map.put("Holy See (Vatican City State)", "VA");

@@ -1,10 +1,11 @@
-package mu.zz.pikaso.weather.sql;
+package mu.zz.pikaso.weather.tasks;
 
 import android.os.AsyncTask;
 
 import java.util.List;
 
 import mu.zz.pikaso.weather.representations.City;
+import mu.zz.pikaso.weather.sql.DataBaseHelper;
 import mu.zz.pikaso.weather.ui.IActionUI;
 
 /**

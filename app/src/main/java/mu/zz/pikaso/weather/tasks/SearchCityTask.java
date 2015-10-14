@@ -1,4 +1,4 @@
-package mu.zz.pikaso.weather.ui;
+package mu.zz.pikaso.weather.tasks;
 
 
 import android.os.AsyncTask;

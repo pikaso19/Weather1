@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -65,27 +66,26 @@ public class MenuFragment extends ListFragment {
             adapter=new CitiesListAdapter(getActivity(), android.R.id.list);
             setListAdapter(adapter);
             // LOAD CITIES FROM SQL
-            try{
-                ((IActionUI) getActivity()).loadCities();
-            } catch (ClassCastException e) {
-                throw new ClassCastException(getActivity().toString()
-                        + " must implement IActionUI");
+            ((IActionUI) getActivity()).loadCities();
+
+        }
+
+        getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                ((IActionUI) getActivity()).onCityDelete( adapter.getItem(position) );
+                return true;
             }
-        }
+        });
 
+        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ((IActionUI) getActivity()).onCitySelected( adapter.getItem(position) );
+            }
+        });
 
-
-    }
-
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-        try{
-            ((IActionUI) getActivity()).onCitySelected( adapter.getItem(position) );
-        } catch (ClassCastException e) {
-            throw new ClassCastException(getActivity().toString()
-                    + " must implement IActionUI");
-        }
     }
 
     public void addCity(City city){

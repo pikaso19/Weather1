@@ -78,6 +78,13 @@ public class WeatherFragment extends Fragment {
             weatherAdapter.setWeatherDataset(new ArrayList<Weather>());
             weatherAdapter.setActivity(getActivity());
             recyclerView.setAdapter(weatherAdapter);
+            //when adapter is set signal MainActivity
+            try {
+                ((IActionUI) getActivity()).loadWeather(mParam2);
+            } catch (ClassCastException e) {
+                throw new ClassCastException(getActivity().toString()
+                        + " must implement IActionUI");
+            }
 
             title.setText(mParam1);
 

@@ -20,21 +20,17 @@ public interface IActionUI {
     void displayCities(List<City> cities);
 
     void onCitySelected(City city);
-    void onCityDelete(City city);
+    void onCityDelete(final City city);
 
+    void RefreshAllCompleted();
     //fragment 2
     void onClickRefresh(RecyclerView rw, long id);
     void displayForecast(List<Weather> forecast, long cityID);
-    void savedWeather();
-    void savedForecast(long cityID);
+    void loadWeather(long cityID);
 
     //fragment 3
     void onCityAdd(City city);
-
-    // events
-    void readyForecast(List<Weather> forecast, long cityID);
-    void readyWeather(Weather current, long cityID);
-    void readyRefreshALL();
-
+    void CitySaved(City city);
+    void CityDeleted(final City city);
 
 }

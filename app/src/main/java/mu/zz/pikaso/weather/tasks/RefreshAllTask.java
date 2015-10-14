@@ -1,16 +1,14 @@
-package mu.zz.pikaso.weather.sql;
+package mu.zz.pikaso.weather.tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
-import java.util.Calendar;
 import java.util.List;
 
 import mu.zz.pikaso.weather.internet.Connection;
-import mu.zz.pikaso.weather.internet.RecvForecastTask;
 import mu.zz.pikaso.weather.representations.City;
 import mu.zz.pikaso.weather.representations.Weather;
+import mu.zz.pikaso.weather.sql.DataBaseHelper;
 import mu.zz.pikaso.weather.ui.IActionUI;
 
 /**
@@ -44,9 +42,9 @@ public class RefreshAllTask extends AsyncTask<Void,Void,Void> {
                     }
                     for(int j=0;j<forecast.size();j++){
                         db.Weather.insert(forecast.get(j), cities.get(i).getId());
-                        db.City.updateWLU(cities.get(i).getId());
-                        db.City.updateFLU(cities.get(i).getId());
                     }
+                    db.City.updateWLU(cities.get(i).getId());
+                    db.City.updateFLU(cities.get(i).getId());
                 }
             }
         }
@@ -57,7 +55,7 @@ public class RefreshAllTask extends AsyncTask<Void,Void,Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
 
-        ((IActionUI)context).readyRefreshALL();
+        ((IActionUI)context).RefreshAllCompleted();
     }
 
 
