@@ -36,9 +36,7 @@ public class LoadWeatherTask extends AsyncTask<Void,Void,List<Weather>> {
             // load data from DB
             forecast = dataBaseHelper.Weather.selectAll(cityID);
         }else{
-            Log.d("0k19vej5ug", "Conditions.isInternet beg");
             boolean isOnline = Conditions.isInternetAvailable((Context) context);
-            Log.d("0k19vej5ug", "Conditions.isInternet res = "+isOnline);
             if(isOnline) {
                 //load data from Internet
                 Connection connection = new Connection();
@@ -74,5 +72,12 @@ public class LoadWeatherTask extends AsyncTask<Void,Void,List<Weather>> {
     protected void onPostExecute(List<Weather> forecast) {
         super.onPostExecute(forecast);
         context.displayForecast(forecast, cityID,isUpdated);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        dataBaseHelper = null;
+        context = null;
     }
 }

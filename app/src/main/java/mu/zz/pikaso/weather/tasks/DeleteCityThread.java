@@ -1,6 +1,7 @@
 package mu.zz.pikaso.weather.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.List;
 
@@ -28,5 +29,13 @@ public class DeleteCityThread extends Thread {
         db.City.delete(city.getId());
         //Signal MainActivity
         context.CityDeleted(city);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        db = null;
+        city = null;
+        context = null;
     }
 }

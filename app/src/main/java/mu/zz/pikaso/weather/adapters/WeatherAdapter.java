@@ -2,6 +2,7 @@ package mu.zz.pikaso.weather.adapters;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,4 +85,11 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherH
         return weatherDataset.size();
     }
 
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        activity = null;
+        weatherDataset = null;
+    }
 }

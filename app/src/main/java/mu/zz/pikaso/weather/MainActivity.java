@@ -2,20 +2,26 @@ package mu.zz.pikaso.weather;
 
 
 import android.content.DialogInterface;
+import android.content.res.Configuration;
+import android.graphics.Point;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 
 import java.util.List;
 
 import mu.zz.pikaso.weather.tasks.DeleteCityThread;
+import mu.zz.pikaso.weather.tasks.SearchCityTask;
 import mu.zz.pikaso.weather.tools.Conditions;
 import mu.zz.pikaso.weather.representations.City;
 import mu.zz.pikaso.weather.representations.Weather;
@@ -32,20 +38,28 @@ public class MainActivity extends FragmentActivity implements IActionUI{
     private MenuFragment menuFragment;
     private AddCityFragmentDialog dialogFragment;
     private DataBaseHelper dataBase;
+    private boolean BigDisplay = false;
+
+    private boolean isRefreshAllRunning = false;
+    private boolean isRefreshRunning = false;
+    private boolean isSearchRunning = false;
+
+    FrameLayout frame1;
+    FrameLayout frame2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        frame1 = (FrameLayout) findViewById(R.id.fragment);
+        frame2 = (FrameLayout) findViewById(R.id.fragment2);
+
         //deleteDatabase(DataBaseHelper.DATABASE_NAME); // delete DataBase
         try {
             dataBase = new DataBaseHelper(getApplicationContext());
         }catch (Exception e) {
-            Log.d("0k19vej5ug", "[FORCE] Database delete");
             deleteDatabase(DataBaseHelper.DATABASE_NAME); // delete DataBase
-            Log.d("0k19vej5ug", "[FORCE] Database create!");
-            dataBase = new DataBaseHelper(getApplicationContext());
         }
 
         // Check that the activity is using the layout version with
@@ -72,6 +86,42 @@ public class MainActivity extends FragmentActivity implements IActionUI{
 
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        //changeFragmentsDisplay();
+    }
+
+    private void changeFragmentsDisplay(){
+        //get Display size
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        Log.d("z1z1z1", "W:" + width + " H:" + height);
+        //change settings
+        if(width>320){
+            BigDisplay = true;
+            int widthNew = width/3;
+            frame1.getLayoutParams().width = widthNew;
+            frame2.setVisibility(View.VISIBLE);
+            frame2.getLayoutParams().width = width - widthNew;
+
+            weatherFragment = WeatherFragment.newInstance(null,0);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment2, weatherFragment).commit();
+
+        }else{
+            BigDisplay = false;
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT);
+            frame1.setLayoutParams(lp);
+            frame2.setVisibility(View.GONE);
+            getSupportFragmentManager().beginTransaction().remove(weatherFragment).commit();
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -87,6 +137,7 @@ public class MainActivity extends FragmentActivity implements IActionUI{
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            deleteDatabase(DataBaseHelper.DATABASE_NAME); // delete DataBase
             return true;
         }
 
@@ -100,7 +151,10 @@ public class MainActivity extends FragmentActivity implements IActionUI{
     public void onClickRefreshALL (){
         // V
         //answer => MainActivity.RefreshAllCompleted()
-        new RefreshAllTask(dataBase, this).execute();
+        if(!isRefreshAllRunning) {
+            new RefreshAllTask(dataBase, this).execute();
+            isRefreshAllRunning = true; //block
+        }
     }
 
     @Override
@@ -160,6 +214,7 @@ public class MainActivity extends FragmentActivity implements IActionUI{
         // here => MainActivity.displayCities(List..)
         LoadCitiesTask task = new LoadCitiesTask(dataBase, this);
         task.execute();
+
     }
 
     @Override
@@ -173,9 +228,12 @@ public class MainActivity extends FragmentActivity implements IActionUI{
     }
 
     @Override
-    public void RefreshAllCompleted() {
+    public void RefreshAllCompleted(boolean success) {
         // V
-        Toast.makeText(this,"Refresh completed!", Toast.LENGTH_SHORT).show();
+        if(success)
+            Toast.makeText(this,"Refresh completed!", Toast.LENGTH_SHORT).show();
+
+        isRefreshAllRunning = false; //un-block
     }
 
     /*
@@ -197,10 +255,13 @@ public class MainActivity extends FragmentActivity implements IActionUI{
         // task => MainActivity.displayForecast(List..)
         if(Conditions.isInternetAvailable(this)) {
             //before doing something check internet connection
-            RefreshWeatherTask task = new RefreshWeatherTask(dataBase, cityID, this);
-            task.execute();
+            if(!isRefreshRunning){
+                RefreshWeatherTask task = new RefreshWeatherTask(dataBase, cityID, this);
+                task.execute();
+                isRefreshRunning = true;
+            }
         } else {
-            Toast.makeText(this.getApplicationContext(), "There NO INTERNET connection available!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this.getApplicationContext(), "NO INTERNET connection available!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -213,11 +274,12 @@ public class MainActivity extends FragmentActivity implements IActionUI{
                 weatherFragment.DisplayWeather(forecast);
                 //TODO: change to single item ading
                 if(isUpdated)
-                    Toast.makeText(this, "Weather was Updated!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Weather was Updated!", Toast.LENGTH_SHORT).show();
             }
         }else{
-            Toast.makeText(this, "Can't get forecast+weather!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Can't get forecast+weather!", Toast.LENGTH_SHORT).show();
         }
+        isRefreshRunning = false;
 
     }
 
@@ -229,6 +291,21 @@ public class MainActivity extends FragmentActivity implements IActionUI{
     */
 
     @Override
+    public void searchCity(String pattern) {
+        if(!isSearchRunning) {
+            SearchCityTask task = new SearchCityTask(pattern, this);
+            task.execute();
+            isSearchRunning = true;
+        }
+    }
+
+    @Override
+    public void foundCitiesDisplay(List<City> cities) {
+        dialogFragment.fillListCities(cities);
+        isSearchRunning = false;
+    }
+
+    @Override
     public void onCityAdd(City city) {
         if(city != null){
             if(city.getName() != null && city.getId() > 0){
@@ -237,13 +314,13 @@ public class MainActivity extends FragmentActivity implements IActionUI{
                     SaveCityTask thread = new SaveCityTask(city, dataBase, this);
                     thread.execute();
                 }else{
-                    Toast.makeText(this, "Weather is available only for settlements", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Weather is available only for settlements", Toast.LENGTH_SHORT).show();
                 }
             }else{
-                Toast.makeText(this, "Retry search with analogue", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Retry search with analogue", Toast.LENGTH_SHORT).show();
             }
         }else{
-            Toast.makeText(this, "Press find and choose city from list", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Press find and choose city from list", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -255,10 +332,9 @@ public class MainActivity extends FragmentActivity implements IActionUI{
                 dialogFragment.dismiss();
             }
         }else{
-            Toast.makeText(this, "This city already is in your Favourites", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "This city already is in your Favourites", Toast.LENGTH_SHORT).show();
         }
     }
-
 
 
 

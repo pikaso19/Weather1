@@ -1,6 +1,7 @@
 package mu.zz.pikaso.weather.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.List;
 
@@ -29,5 +30,12 @@ public class LoadCitiesTask extends AsyncTask<Void,Void,List<City>> {
     protected void onPostExecute(List<City> cities) {
         super.onPostExecute(cities);
         context.displayCities(cities);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        dataBaseHelper = null;
+        context = null;
     }
 }

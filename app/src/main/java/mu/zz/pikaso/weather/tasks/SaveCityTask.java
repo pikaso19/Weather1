@@ -1,6 +1,7 @@
 package mu.zz.pikaso.weather.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import mu.zz.pikaso.weather.representations.City;
 import mu.zz.pikaso.weather.sql.DataBaseHelper;
@@ -33,4 +34,10 @@ public class SaveCityTask extends AsyncTask<Void,Void,City> {
         context.CitySaved(city);
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        db = null;
+        context = null;
+    }
 }

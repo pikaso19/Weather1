@@ -2,23 +2,18 @@ package mu.zz.pikaso.weather;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 
-import java.util.List;
 
 import mu.zz.pikaso.weather.adapters.CitiesListAdapter;
 import mu.zz.pikaso.weather.representations.City;
 import mu.zz.pikaso.weather.ui.IActionUI;
 
-/**
- * A placeholder fragment containing a simple view.
- */
+
 public class MenuFragment extends ListFragment {
     private CitiesListAdapter adapter;
 
@@ -93,5 +88,10 @@ public class MenuFragment extends ListFragment {
         }
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        adapter.clear();
+        adapter = null;
+    }
 }

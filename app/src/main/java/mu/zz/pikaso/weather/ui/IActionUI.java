@@ -21,7 +21,7 @@ public interface IActionUI {
     void onCitySelected(City city);
     void onCityDelete(final City city);
 
-    void RefreshAllCompleted();
+    void RefreshAllCompleted(boolean success);
     //fragment 2
     void onClickRefresh(RecyclerView rw, long id);
     void displayForecast(List<Weather> forecast, long cityID, boolean isUpdated);
@@ -29,6 +29,8 @@ public interface IActionUI {
 
     //fragment 3
     void onCityAdd(City city);
+    void searchCity(String pattern);
+    void foundCitiesDisplay(List<City> cities);
     void CitySaved(City city);
     void CityDeleted(final City city);
 

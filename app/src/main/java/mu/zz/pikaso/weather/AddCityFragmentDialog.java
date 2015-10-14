@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import mu.zz.pikaso.weather.tools.Conditions;
 import mu.zz.pikaso.weather.representations.City;
@@ -26,6 +27,7 @@ import mu.zz.pikaso.weather.ui.IActionUI;
  */
 public class AddCityFragmentDialog extends DialogFragment {
     private City selectedCity;
+    private ListView listCities;
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
@@ -35,7 +37,7 @@ public class AddCityFragmentDialog extends DialogFragment {
 
         View v = inflater.inflate(R.layout.fragment_addcity, null);
 
-        final ListView listCities = (ListView) v.findViewById(R.id.listCities);
+        listCities = (ListView) v.findViewById(R.id.listCities);
         ArrayAdapter<City> adapter = new ArrayAdapter<City>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<City>());
         listCities.setAdapter(adapter);
 
@@ -48,13 +50,10 @@ public class AddCityFragmentDialog extends DialogFragment {
                 if(Conditions.isInternetAvailable(getContext())) {
                     //before doing something check internet connection
                     if (edt.getText().toString().length() > 2) {
-                        SearchCityTask task = new SearchCityTask(listCities);
-                        String cityPattern = edt.getText().toString();
-                        task.setPattern(cityPattern);
-                        task.execute();
+                        ((IActionUI) getActivity()).searchCity(edt.getText().toString());
                     }
                 }else{
-                    Toast.makeText(getContext(),"There NO INTERNET connection available!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(),"NO INTERNET connection available!",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -92,4 +91,17 @@ public class AddCityFragmentDialog extends DialogFragment {
 
         return dialog;
     }
+
+    public void fillListCities(List<City> cities){
+        ((ArrayAdapter<City>)listCities.getAdapter()).clear();
+        if(cities.size()>0){
+            for (int i=0;i<cities.size();i++) {
+                ((ArrayAdapter<City>)listCities.getAdapter()).insert(cities.get(i), i);
+            }
+        }else{
+            ((ArrayAdapter<String>)listCities.getAdapter()).insert("Nothing Found", 0);
+        }
+        ((ArrayAdapter<String>)listCities.getAdapter()).notifyDataSetChanged();
+    }
+
 }

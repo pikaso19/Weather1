@@ -87,4 +87,11 @@ public class RefreshWeatherTask extends AsyncTask<Void,Void,List<Weather>> {
         super.onPostExecute(forecast);
         context.displayForecast(forecast, cityID, isUpdated);
     }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        dataBaseHelper = null;
+        context = null;
+    }
 }

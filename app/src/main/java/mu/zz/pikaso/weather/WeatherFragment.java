@@ -24,7 +24,7 @@ import mu.zz.pikaso.weather.ui.IActionUI;
 public class WeatherFragment extends Fragment {
     private static final String ARG_PARAM1 = "city";
     private static final String ARG_PARAM2 = "id";
-    private String mParam1;                             //city name
+    private String mParam1;                              //city name
     private long mParam2;                                //city id
 
     TextView title;
@@ -79,11 +79,14 @@ public class WeatherFragment extends Fragment {
             weatherAdapter.setActivity(getActivity());
             recyclerView.setAdapter(weatherAdapter);
             //when adapter is set signal MainActivity
-            try {
-                ((IActionUI) getActivity()).loadWeather(mParam2);
-            } catch (ClassCastException e) {
-                throw new ClassCastException(getActivity().toString()
-                        + " must implement IActionUI");
+            if(mParam2>0){
+                try {
+                    ((IActionUI) getActivity()).loadWeather(mParam2);
+                    refresh.setEnabled(false);
+                } catch (ClassCastException e) {
+                    throw new ClassCastException(getActivity().toString()
+                            + " must implement IActionUI");
+                }
             }
 
             if(mParam1 != null)
@@ -101,6 +104,7 @@ public class WeatherFragment extends Fragment {
                 public void onClick(View v) {
                     try {
                         ((IActionUI) getActivity()).onClickRefresh(recyclerView, mParam2);
+                        refresh.setEnabled(false);
                     } catch (ClassCastException e) {
                         throw new ClassCastException(getActivity().toString()
                                 + " must implement IActionUI");
@@ -113,11 +117,10 @@ public class WeatherFragment extends Fragment {
     }
 
     void DisplayWeather(List<Weather> forecast){
+        refresh.setEnabled(true);
         if(forecast.size()>0){
-            Log.d("0k19vej5ug", "setting weather list!");
             ((WeatherAdapter)recyclerView.getAdapter()).setWeatherDataset(forecast);
         }
-        Log.d("0k19vej5ug", "updating weather list!");
         ((WeatherAdapter)recyclerView.getAdapter()).notifyDataSetChanged();
     }
 

@@ -39,7 +39,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         // Create db tables
         db.execSQL(DataBaseContract.Query.CREATE_TABLECITY);
         db.execSQL(DataBaseContract.Query.CREATE_TABLEWEATHER);
-        Log.d("SQLTEST", "DataBase tables created!");
     }
 
     @Override
@@ -47,7 +46,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         // Delete database on upgrade and create empty new db
         db.execSQL(DataBaseContract.Query.DROP_TABLECITY);
         db.execSQL(DataBaseContract.Query.DROP_TABLEWEATHER);
-        Log.d("SQLTEST", "DataBase deleted!");
 
         onCreate(db);
     }
@@ -65,10 +63,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 values.put(DataBaseContract.TableCity.COLUMN_NAME_COUNTRY, city.getCountry());
                 // insert row
                 db.insert(DataBaseContract.TableCity.TABLE_NAME, null, values);
-                Log.d("SQLTEST[C]", "DataBase insert City");
                 return true;
             }
-            Log.d("SQLTEST[C]", "DataBase can't insert the City exsist");
             return false;
         }
 
@@ -83,9 +79,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 values.put(DataBaseContract.TableCity.COLUMN_NAME_WUPDATE, iso.format(calendar.getTime()));
                 // update row
                 db.update(DataBaseContract.TableCity.TABLE_NAME, values, DataBaseContract.Query.UPDATE_WLU + cityID, null);
-                Log.d("SQLTEST[C]", "DataBase WLU set");
-            }else{
-                Log.d("SQLTEST[C]", "No city with id = "+cityID);
             }
         }
 
@@ -110,7 +103,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             List<City> cities = new ArrayList<City>();
             SQLiteDatabase db = DataBaseHelper.this.getReadableDatabase();
             // fill data
-            Log.d("0k19vej5ug", "SALL: "+DataBaseContract.Query.GET_ALL_CITIES);
             Cursor c = db.rawQuery(DataBaseContract.Query.GET_ALL_CITIES, null);
             if (c != null) {
                 if (c.moveToFirst()) {
@@ -125,12 +117,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 if(c!=null)
                     if(!c.isClosed())
                         c.close();
-            }
-
-            //LOG FOR (delete after test)
-            Log.d("SQLTEST[C]","selectALL():");
-            for(int i=0;i<cities.size();i++){
-                Log.d("SQLTEST[C]","City["+(i)+"] = "+cities.get(i));
             }
 
             return cities;
@@ -150,14 +136,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     if(c!=null)
                         if(!c.isClosed())
                             c.close();
-                    Log.d("SQLTEST[C]", "DataBase get City");
                     return city;
                 }
                 if(c!=null)
                     if(!c.isClosed())
                         c.close();
             }
-            Log.d("SQLTEST[C]", "DataBase can't get the City");
             return null;
         }
 
@@ -172,13 +156,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = DataBaseHelper.this.getReadableDatabase();
             Cursor c = db.rawQuery(DataBaseContract.Query.GET_CITY_BY_ID + code, null);
             if (c.getCount() > 0) {
-                Log.d("SQLTEST[C]", "SQL: Record exsist");
                 if(c!=null)
                     if(!c.isClosed())
                         c.close();
                 return true;
             }
-            Log.d("SQLTEST[C]", "SQL: New record");
             if(c!=null)
                 if(!c.isClosed())
                     c.close();
@@ -203,7 +185,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     try {
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(iso.parse(strDate));
-                        Log.d("SQLTEST[C]", "DataBase get wlu");
                         if(c!=null)
                             if(!c.isClosed())
                                 c.close();
@@ -214,14 +195,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     if(c!=null)
                         if(!c.isClosed())
                             c.close();
-                    Log.d("SQLTEST[C]", "DataBase can't parse wlu");
                     return null;
                 }
             }
             if(c!=null)
                 if(!c.isClosed())
                     c.close();
-            Log.d("SQLTEST[C]", "DataBase can't get the wlu");
             return null;
         }
 
@@ -243,7 +222,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     try {
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(iso.parse(strDate));
-                        Log.d("SQLTEST[C]", "DataBase get flu");
                         if(c!=null)
                             if(!c.isClosed())
                                 c.close();
@@ -254,14 +232,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     if(c!=null)
                         if(!c.isClosed())
                             c.close();
-                    Log.d("SQLTEST[C]", "DataBase can't parse flu");
                     return null;
                 }
             }
             if(c!=null)
                 if(!c.isClosed())
                     c.close();
-            Log.d("SQLTEST[C]", "DataBase can't get the flu");
             return null;
         }
 
@@ -287,7 +263,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             values.put(DataBaseContract.TableWeather.COLUMN_NAME_CITYID, cityID);
             // insert row
             long id = db.insert(DataBaseContract.TableWeather.TABLE_NAME, null, values);
-            Log.d("SQLTEST[W]", "DataBase insert Weather "+id);
             return id;
         }
 
@@ -295,7 +270,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             List<Weather> forecast = new ArrayList<Weather>();
             SQLiteDatabase db = DataBaseHelper.this.getReadableDatabase();
             // fill data
-            Log.d("0k19vej5ug", "WALL: " + DataBaseContract.Query.GET_FORECAST + cityID);
             Cursor c = db.rawQuery(DataBaseContract.Query.GET_FORECAST + cityID, null);
             if (c != null) {
                 if (c.moveToFirst()) {
@@ -357,7 +331,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                    Log.d("SQLTEST[W]", "DataBase get Weather " + weather.getDescription());
                     if(c!=null)
                         if(!c.isClosed())
                             c.close();
@@ -367,7 +340,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     if(!c.isClosed())
                         c.close();
             }
-            Log.d("SQLTEST[W]", "DataBase can't get the Weather");
             return null;
         }
 
@@ -387,7 +359,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             Calendar today = Calendar.getInstance();
             long id = -1;
             // fill data
-            Log.d("0k19vej5ug", "getTodayWeatherID: " + DataBaseContract.Query.GET_FORECAST + cityID);
             Cursor c = db.rawQuery(DataBaseContract.Query.GET_FORECAST+cityID, null);
             if (c != null) {
                 if (c.moveToFirst()) {
@@ -403,7 +374,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                                 if(c!=null)
                                     if(!c.isClosed())
                                         c.close();
-                                Log.d("0k19vej5ug", String.valueOf(id));
                                 return id;
                             }else{
                                 id = -1;
@@ -417,25 +387,21 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     if(!c.isClosed())
                         c.close();
             }
-            Log.d("0k19vej5ug", String.valueOf(id));
             return id;
         }
 
         public void delete(long id){
             SQLiteDatabase db = DataBaseHelper.this.getWritableDatabase();
-            Log.d("SQLTEST[W]", "delete(" + id + ")");
             db.delete(DataBaseContract.TableWeather.TABLE_NAME, DataBaseContract.Query.DELETE_WEATHER_WHERE_ID + id, null);
         }
 
         public void deleteByCity(long cityID){
             SQLiteDatabase db = DataBaseHelper.this.getWritableDatabase();
-            Log.d("SQLTEST[W]", "deleteByCity(" + cityID + ")");
             db.delete(DataBaseContract.TableWeather.TABLE_NAME, DataBaseContract.Query.DELETE_WEATHER_WHERE_CITYID + cityID, null);
         }
 
         public void deleteWhole(){
             SQLiteDatabase db = DataBaseHelper.this.getWritableDatabase();
-            Log.d("SQLTEST[W]", "deleteWhole()");
             db.delete(DataBaseContract.TableWeather.TABLE_NAME, null, null);
         }
 
@@ -443,8 +409,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = DataBaseHelper.this.getWritableDatabase();
             Calendar today = Calendar.getInstance();
             SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd");
-            Log.d("0k19vej5ug","TIME: today="+today.toString());
-            Log.d("0k19vej5ug","TIME: format="+iso.format(today.getTime()));
             db.delete(DataBaseContract.TableWeather.TABLE_NAME, "strftime('%Y-%m-%d', date) < strftime('%Y-%m-%d', '"+iso.format(today.getTime())+"')", null);
         }
 

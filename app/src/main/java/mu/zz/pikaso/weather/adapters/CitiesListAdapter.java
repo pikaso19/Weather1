@@ -86,7 +86,7 @@ public class CitiesListAdapter extends ArrayAdapter<City> {
         }
 
         viewHolder.city.setText(cities.get(position).getName());
-        Log.d("0k19vej5ug",cities.get(position).getFlagURL());
+
         Glide.with(context).load(cities.get(position).getFlagURL())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.noflag)//TODO: change to no_image
@@ -95,4 +95,10 @@ public class CitiesListAdapter extends ArrayAdapter<City> {
         return convertView;
     };
 
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        context = null;
+        cities = null;
+    }
 }

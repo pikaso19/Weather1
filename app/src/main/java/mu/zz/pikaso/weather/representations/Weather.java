@@ -107,7 +107,6 @@ public class Weather implements Comparable<Weather>{
         long endDay = now.getTime() / 1000 / 60 / 60 / 24;
         long startDay = before.getTime() / 1000 / 60 / 60 / 24;
         long daysBetween = endDay - startDay;
-        Log.d("0k19vej5ug", now.toString() + " vs " + before.toString() + " = "+daysBetween + " days");
         return (int)daysBetween;
     }
 
@@ -115,7 +114,6 @@ public class Weather implements Comparable<Weather>{
         long endHour = now.getTime() / 1000 / 60 / 60;
         long startHour = before.getTime() / 1000 / 60 / 60;
         long hoursBetween = endHour - startHour;
-        Log.d("0k19vej5ug", now.toString() + " vs " + before.toString() + " = "+hoursBetween + " hours");
         return (int)hoursBetween;
     }
 }
