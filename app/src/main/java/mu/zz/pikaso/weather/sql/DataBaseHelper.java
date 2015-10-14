@@ -22,6 +22,8 @@ import mu.zz.pikaso.weather.representations.Weather;
 public class DataBaseHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Weather.db";
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
 
     public TableCity City;
     public TableWeather Weather;
@@ -75,7 +77,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 SQLiteDatabase db = DataBaseHelper.this.getWritableDatabase();
                 // fill data
                 ContentValues values = new ContentValues();
-                SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat iso = new SimpleDateFormat(DATE_FORMAT);
                 Calendar calendar = Calendar.getInstance();
                 values.put(DataBaseContract.TableCity.COLUMN_NAME_WUPDATE, iso.format(calendar.getTime()));
                 // update row
@@ -92,7 +94,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 SQLiteDatabase db = DataBaseHelper.this.getWritableDatabase();
                 // fill data
                 ContentValues values = new ContentValues();
-                SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat iso = new SimpleDateFormat(DATE_FORMAT);
                 Calendar calendar = Calendar.getInstance();
                 values.put(DataBaseContract.TableCity.COLUMN_NAME_FUPDATE, iso.format(calendar.getTime()));
                 // update row
@@ -196,7 +198,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                                 c.close();
                         return null;
                     }
-                    SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    SimpleDateFormat iso = new SimpleDateFormat(DATE_FORMAT);
                     try {
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(iso.parse(strDate));
@@ -236,7 +238,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                                 c.close();
                         return null;
                     }
-                    SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    SimpleDateFormat iso = new SimpleDateFormat(DATE_FORMAT);
                     try {
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(iso.parse(strDate));
@@ -279,7 +281,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             values.put(DataBaseContract.TableWeather.COLUMN_NAME_EVENING, weather.getEve());
             values.put(DataBaseContract.TableWeather.COLUMN_NAME_DESCRIPTION, weather.getDescription());
             values.put(DataBaseContract.TableWeather.COLUMN_NAME_ICON, weather.getImage());
-            SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat iso = new SimpleDateFormat(DATE_FORMAT);
             values.put(DataBaseContract.TableWeather.COLUMN_NAME_DATE, iso.format(weather.getDate().getTime()));
             values.put(DataBaseContract.TableWeather.COLUMN_NAME_CITYID, cityID);
             // insert row
@@ -307,7 +309,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                         weather.setDescription(c.getString(c.getColumnIndex(DataBaseContract.TableWeather.COLUMN_NAME_DESCRIPTION)));
                         weather.setImage(c.getString(c.getColumnIndex(DataBaseContract.TableWeather.COLUMN_NAME_ICON)));
                         String strDate = c.getString(c.getColumnIndex(DataBaseContract.TableWeather.COLUMN_NAME_DATE));
-                        SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        SimpleDateFormat iso = new SimpleDateFormat(DATE_FORMAT);
                         try {
                             Calendar calendar = Calendar.getInstance();
                             calendar.setTime(iso.parse(strDate));
@@ -346,7 +348,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     weather.setDescription(c.getString(c.getColumnIndex(DataBaseContract.TableWeather.COLUMN_NAME_DESCRIPTION)));
                     weather.setImage(c.getString(c.getColumnIndex(DataBaseContract.TableWeather.COLUMN_NAME_ICON)));
                     String strDate = c.getString(c.getColumnIndex(DataBaseContract.TableWeather.COLUMN_NAME_DATE));
-                    SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    SimpleDateFormat iso = new SimpleDateFormat(DATE_FORMAT);
                     try {
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(iso.parse(strDate));
@@ -391,7 +393,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     do {
                         id = c.getLong(c.getColumnIndex(DataBaseContract.TableWeather.COLUMN_NAME_ID));
                         String strDate = c.getString(c.getColumnIndex(DataBaseContract.TableWeather.COLUMN_NAME_DATE));
-                        SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        SimpleDateFormat iso = new SimpleDateFormat(DATE_FORMAT);
                         try {
                             Calendar calendar = Calendar.getInstance();
                             calendar.setTime(iso.parse(strDate));
@@ -420,23 +422,29 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         public void delete(long id){
             SQLiteDatabase db = DataBaseHelper.this.getWritableDatabase();
-            // fill data
             Log.d("SQLTEST[W]", "delete(" + id + ")");
             db.delete(DataBaseContract.TableWeather.TABLE_NAME, DataBaseContract.Query.DELETE_WEATHER_WHERE_ID + id, null);
         }
 
         public void deleteByCity(long cityID){
             SQLiteDatabase db = DataBaseHelper.this.getWritableDatabase();
-            // fill data
             Log.d("SQLTEST[W]", "deleteByCity(" + cityID + ")");
             db.delete(DataBaseContract.TableWeather.TABLE_NAME, DataBaseContract.Query.DELETE_WEATHER_WHERE_CITYID + cityID, null);
         }
 
         public void deleteWhole(){
             SQLiteDatabase db = DataBaseHelper.this.getWritableDatabase();
-            // fill data
             Log.d("SQLTEST[W]", "deleteWhole()");
             db.delete(DataBaseContract.TableWeather.TABLE_NAME, null, null);
+        }
+
+        public void deleteOldWeather(){
+            SQLiteDatabase db = DataBaseHelper.this.getWritableDatabase();
+            Calendar today = Calendar.getInstance();
+            SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd");
+            Log.d("0k19vej5ug","TIME: today="+today.toString());
+            Log.d("0k19vej5ug","TIME: format="+iso.format(today.getTime()));
+            db.delete(DataBaseContract.TableWeather.TABLE_NAME, "strftime('%Y-%m-%d', date) < strftime('%Y-%m-%d', '"+iso.format(today.getTime())+"')", null);
         }
 
     }

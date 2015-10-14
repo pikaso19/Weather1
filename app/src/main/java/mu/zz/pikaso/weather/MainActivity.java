@@ -214,12 +214,14 @@ public class MainActivity extends FragmentActivity implements IActionUI{
 
 
     @Override
-    public void displayForecast(List<Weather> forecast, long cityID) {
+    public void displayForecast(List<Weather> forecast, long cityID, boolean isUpdated) {
         // V
         if(forecast != null){
             if(!forecast.isEmpty()){
                 weatherFragment.DisplayWeather(forecast);
                 //TODO: change to single item ading
+                if(isUpdated)
+                    Toast.makeText(this, "Weather was Updated!", Toast.LENGTH_LONG).show();
             }
         }else{
             Toast.makeText(this, "Can't get forecast+weather!", Toast.LENGTH_LONG).show();

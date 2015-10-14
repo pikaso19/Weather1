@@ -73,7 +73,6 @@ public class MenuFragment extends ListFragment {
         getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
                 ((IActionUI) getActivity()).onCityDelete( adapter.getItem(position) );
                 return true;
             }

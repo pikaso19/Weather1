@@ -19,34 +19,37 @@ public class RefreshWeatherTask extends AsyncTask<Void,Void,List<Weather>> {
     private DataBaseHelper dataBaseHelper;
     private IActionUI context;
     private long cityID;
+    private boolean isUpdated;
 
     public RefreshWeatherTask(DataBaseHelper dataBaseHelper, long cityID, IActionUI context){
         this.dataBaseHelper = dataBaseHelper;
         this.context = context;
         this.cityID = cityID;
+        isUpdated = false;
     }
+
     @Override
     protected List<Weather> doInBackground(Void... params) {
         List<Weather> forecast;
-        boolean isUPDATED = Conditions.isForecastUpToDate(dataBaseHelper, cityID);
-        if(isUPDATED){
+//        boolean isUPDATED = Conditions.isForecastUpToDate(dataBaseHelper, cityID);
+//        if(isUPDATED){
             // load data from DB
-            isUPDATED = Conditions.isWeatherUpToDate(dataBaseHelper, cityID);
-            if(isUPDATED){
-                forecast = dataBaseHelper.Weather.selectAll(cityID);
-            }else{
-                //download weather from internet
-                Connection connection = new Connection();
-                Weather current = connection.getCurrentWeather(cityID);
-                if(current != null){
-                    long id = dataBaseHelper.Weather.getTodayWeatherID(cityID);
-                    dataBaseHelper.Weather.updateByCurrent(current,id);
-                    dataBaseHelper.City.updateWLU(cityID);
-                }
-                forecast = dataBaseHelper.Weather.selectAll(cityID);
-            }
-        }else{
-            Log.d("0k19vej5ug", "Conditions.isInternet beg");
+//            isUPDATED = Conditions.isWeatherUpToDate(dataBaseHelper, cityID);
+//            if(isUPDATED){
+//                forecast = dataBaseHelper.Weather.selectAll(cityID);
+//            }else{
+//                //download weather from internet
+//                Connection connection = new Connection();
+//                Weather current = connection.getCurrentWeather(cityID);
+//                if(current != null){
+//                   long id = dataBaseHelper.Weather.getTodayWeatherID(cityID);
+//                    dataBaseHelper.Weather.updateByCurrent(current,id);
+//                    dataBaseHelper.City.updateWLU(cityID);
+//                }
+//                forecast = dataBaseHelper.Weather.selectAll(cityID);
+//            }
+//        }else{
+//            Log.d("0k19vej5ug", "Conditions.isInternet beg");
             boolean isOnline = Conditions.isInternetAvailable((Context) context);
             Log.d("0k19vej5ug", "Conditions.isInternet res = "+isOnline);
             if(isOnline) {
@@ -69,19 +72,19 @@ public class RefreshWeatherTask extends AsyncTask<Void,Void,List<Weather>> {
                     }
                     dataBaseHelper.City.updateFLU(cityID);
                     dataBaseHelper.City.updateWLU(cityID);
+                    isUpdated = true;
                 }
-
             }else{
                 //TODO: display user that internet is not available
                 forecast = dataBaseHelper.Weather.selectAll(cityID);
             }
-        }
+//        }
         return forecast;
     }
 
     @Override
     protected void onPostExecute(List<Weather> forecast) {
         super.onPostExecute(forecast);
-        context.displayForecast(forecast, cityID);
+        context.displayForecast(forecast, cityID, isUpdated);
     }
 }

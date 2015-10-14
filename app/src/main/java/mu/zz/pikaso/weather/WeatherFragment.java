@@ -86,7 +86,8 @@ public class WeatherFragment extends Fragment {
                         + " must implement IActionUI");
             }
 
-            title.setText(mParam1);
+            if(mParam1 != null)
+                title.setText(mParam1);
 
             menu.setOnClickListener(new View.OnClickListener() {
                 @Override

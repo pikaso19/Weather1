@@ -25,7 +25,7 @@ public interface IActionUI {
     void RefreshAllCompleted();
     //fragment 2
     void onClickRefresh(RecyclerView rw, long id);
-    void displayForecast(List<Weather> forecast, long cityID);
+    void displayForecast(List<Weather> forecast, long cityID, boolean isUpdated);
     void loadWeather(long cityID);
 
     //fragment 3

@@ -20,11 +20,13 @@ public class LoadWeatherTask extends AsyncTask<Void,Void,List<Weather>> {
     private DataBaseHelper dataBaseHelper;
     private IActionUI context;
     private long cityID;
+    private boolean isUpdated;
 
     public LoadWeatherTask(DataBaseHelper dataBaseHelper, long cityID, IActionUI context){
         this.dataBaseHelper = dataBaseHelper;
         this.context = context;
         this.cityID = cityID;
+        isUpdated = false;
     }
     @Override
     protected List<Weather> doInBackground(Void... params) {
@@ -57,10 +59,11 @@ public class LoadWeatherTask extends AsyncTask<Void,Void,List<Weather>> {
                     }
                     dataBaseHelper.City.updateFLU(cityID);
                     dataBaseHelper.City.updateWLU(cityID);
+                    isUpdated = true;
                 }
 
             }else{
-                //TODO: display user that internet is not available
+                dataBaseHelper.Weather.deleteOldWeather();  //  delete old Weather data
                 forecast = dataBaseHelper.Weather.selectAll(cityID);
             }
         }
@@ -70,6 +73,6 @@ public class LoadWeatherTask extends AsyncTask<Void,Void,List<Weather>> {
     @Override
     protected void onPostExecute(List<Weather> forecast) {
         super.onPostExecute(forecast);
-        context.displayForecast(forecast, cityID);
+        context.displayForecast(forecast, cityID,isUpdated);
     }
 }
