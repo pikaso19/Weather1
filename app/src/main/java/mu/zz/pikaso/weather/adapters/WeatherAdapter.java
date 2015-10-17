@@ -91,5 +91,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherH
         super.finalize();
         activity = null;
         weatherDataset = null;
+        Log.d("MEMORY","WeatherAdapter finalized");
     }
 }

@@ -2,6 +2,7 @@ package mu.zz.pikaso.weather;
 
 
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.support.v4.app.FragmentActivity;
@@ -9,7 +10,6 @@ import android.os.Bundle;
 
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,45 +17,43 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-
 import java.util.List;
 
-import mu.zz.pikaso.weather.tasks.DeleteCityThread;
-import mu.zz.pikaso.weather.tasks.SearchCityTask;
+import mu.zz.pikaso.weather.tasks.*;
+import mu.zz.pikaso.weather.representations.*;
 import mu.zz.pikaso.weather.tools.Conditions;
-import mu.zz.pikaso.weather.representations.City;
-import mu.zz.pikaso.weather.representations.Weather;
 import mu.zz.pikaso.weather.sql.DataBaseHelper;
-import mu.zz.pikaso.weather.tasks.LoadCitiesTask;
-import mu.zz.pikaso.weather.tasks.LoadWeatherTask;
-import mu.zz.pikaso.weather.tasks.RefreshAllTask;
-import mu.zz.pikaso.weather.tasks.RefreshWeatherTask;
-import mu.zz.pikaso.weather.tasks.SaveCityTask;
 import mu.zz.pikaso.weather.ui.IActionUI;
 
 public class MainActivity extends FragmentActivity implements IActionUI{
+    /* fragments */
     private WeatherFragment weatherFragment;
     private MenuFragment menuFragment;
     private AddCityFragmentDialog dialogFragment;
-    private DataBaseHelper dataBase;
-    private boolean BigDisplay = false;
 
+    /* DataBase manager */
+    private DataBaseHelper dataBase;
+
+    /* change view for display with big width */
+    private boolean isBigDisplay = false;
+    private boolean isFullScreenWeather = false;
+
+    /* for init in portrait mode */
+    private boolean isAppLoaded = false;
+    private boolean isAppLoadingAsLandScape = false;
+
+    /* lock/un-lock buttons, while task running */
     private boolean isRefreshAllRunning = false;
     private boolean isRefreshRunning = false;
     private boolean isSearchRunning = false;
 
-    FrameLayout frame1;
-    FrameLayout frame2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        frame1 = (FrameLayout) findViewById(R.id.fragment);
-        frame2 = (FrameLayout) findViewById(R.id.fragment2);
 
-        //deleteDatabase(DataBaseHelper.DATABASE_NAME); // delete DataBase
         try {
             dataBase = new DataBaseHelper(getApplicationContext());
         }catch (Exception e) {
@@ -81,44 +79,21 @@ public class MainActivity extends FragmentActivity implements IActionUI{
 
         }
 
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            isAppLoadingAsLandScape = true;
+        //Orientation must be PORTRAIT while app loading
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
     }
+
 
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        //changeFragmentsDisplay();
-    }
-
-    private void changeFragmentsDisplay(){
-        //get Display size
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
-        Log.d("z1z1z1", "W:" + width + " H:" + height);
-        //change settings
-        if(width>320){
-            BigDisplay = true;
-            int widthNew = width/3;
-            frame1.getLayoutParams().width = widthNew;
-            frame2.setVisibility(View.VISIBLE);
-            frame2.getLayoutParams().width = width - widthNew;
-
-            weatherFragment = WeatherFragment.newInstance(null,0);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment2, weatherFragment).commit();
-
-        }else{
-            BigDisplay = false;
-            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT);
-            frame1.setLayoutParams(lp);
-            frame2.setVisibility(View.GONE);
-            getSupportFragmentManager().beginTransaction().remove(weatherFragment).commit();
-        }
+        if(isAppLoaded)
+            ChangeFragmentsDisplay();
     }
 
     @Override
@@ -144,12 +119,13 @@ public class MainActivity extends FragmentActivity implements IActionUI{
         return super.onOptionsItemSelected(item);
     }
 
+
+
     /*
                                                 FRAGMENT 1
     */
     @Override
     public void onClickRefreshALL (){
-        // V
         //answer => MainActivity.RefreshAllCompleted()
         if(!isRefreshAllRunning) {
             new RefreshAllTask(dataBase, this).execute();
@@ -159,23 +135,23 @@ public class MainActivity extends FragmentActivity implements IActionUI{
 
     @Override
     public void onClickAddCity() {
-        // V
         dialogFragment = new AddCityFragmentDialog();
         dialogFragment.show(getSupportFragmentManager().beginTransaction(), null);
     }
 
     @Override
     public void onCitySelected(City city) {
-        // V
-        weatherFragment = WeatherFragment.newInstance(city.getName(),city.getId());
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment, weatherFragment).addToBackStack(null).commit();
+        if(isBigDisplay){
+            weatherFragment.setArgs(city.getName(), city.getId());
+        }else{
+            weatherFragment = WeatherFragment.newInstance(city.getName(),city.getId());
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment, weatherFragment).addToBackStack(null).commit();
+        }
+
     }
-
-
 
     @Override
     public void onCityDelete(final City city) {
-        // V
         final IActionUI context = this;
         //TODO: delete city on long press
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -197,7 +173,7 @@ public class MainActivity extends FragmentActivity implements IActionUI{
     }
 
     @Override
-    public void CityDeleted(final City city){
+    public void CityDeleted(final City city) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -206,20 +182,29 @@ public class MainActivity extends FragmentActivity implements IActionUI{
         });
     }
 
-
     @Override
     public void loadCities(){
-        // V
         //MenuFragment is loaded => here
         // here => MainActivity.displayCities(List..)
         LoadCitiesTask task = new LoadCitiesTask(dataBase, this);
         task.execute();
 
+        //INITIALIZATION
+        if(!isAppLoaded){
+            if(isAppLoadingAsLandScape) {
+                //draw landscape view
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                ChangeFragmentsDisplay();
+            }
+            //allow orientation change
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+            isAppLoaded = true;
+        }
+
     }
 
     @Override
     public void displayCities(List<City> cities) {
-        // V
         if(!cities.isEmpty()){
             for (City city: cities) {
                 menuFragment.addCity(city);
@@ -229,9 +214,8 @@ public class MainActivity extends FragmentActivity implements IActionUI{
 
     @Override
     public void RefreshAllCompleted(boolean success) {
-        // V
         if(success)
-            Toast.makeText(this,"Refresh completed!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getApplicationContext(),"Refresh completed!", Toast.LENGTH_SHORT).show();
 
         isRefreshAllRunning = false; //un-block
     }
@@ -242,7 +226,6 @@ public class MainActivity extends FragmentActivity implements IActionUI{
 
     @Override
     public void loadWeather(long cityID) {
-        // V
         //=> from WeatherFragment after adapter is set
         //to => MainActivity.displayForecast(List..);
         LoadWeatherTask task = new LoadWeatherTask(dataBase, cityID, this);
@@ -251,40 +234,67 @@ public class MainActivity extends FragmentActivity implements IActionUI{
 
     @Override
     public void onClickRefresh(RecyclerView rw, long cityID) {
-        // V
         // task => MainActivity.displayForecast(List..)
-        if(Conditions.isInternetAvailable(this)) {
-            //before doing something check internet connection
-            if(!isRefreshRunning){
-                RefreshWeatherTask task = new RefreshWeatherTask(dataBase, cityID, this);
-                task.execute();
-                isRefreshRunning = true;
+        if(cityID > 0) {
+            if (Conditions.isInternetAvailable(this)) {
+                //before doing something check internet connection
+                if (!isRefreshRunning) {
+                    RefreshWeatherTask task = new RefreshWeatherTask(dataBase, cityID, this);
+                    task.execute();
+                    isRefreshRunning = true;
+                }
+            } else {
+                Toast.makeText(this.getApplicationContext(), "NO INTERNET connection available!", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            Toast.makeText(this.getApplicationContext(), "NO INTERNET connection available!", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this.getApplicationContext(), "Choose city before!", Toast.LENGTH_SHORT).show();
         }
     }
 
-
     @Override
     public void displayForecast(List<Weather> forecast, long cityID, boolean isUpdated) {
-        // V
         if(forecast != null){
             if(!forecast.isEmpty()){
                 weatherFragment.DisplayWeather(forecast);
-                //TODO: change to single item ading
                 if(isUpdated)
-                    Toast.makeText(this, "Weather was Updated!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this.getApplicationContext(), "Weather was Updated!", Toast.LENGTH_SHORT).show();
             }
         }else{
-            Toast.makeText(this, "Can't get forecast+weather!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getApplicationContext(), "Can't get forecast+weather!", Toast.LENGTH_SHORT).show();
         }
         isRefreshRunning = false;
 
     }
 
+    @Override
+    public void onMenuClick() {
 
-
+        if(isBigDisplay){
+            //landscape
+            FrameLayout frame1 = (FrameLayout) findViewById(R.id.fragment);
+            FrameLayout frame2 = (FrameLayout) findViewById(R.id.fragment2);
+            if(isFullScreenWeather){
+                //half-screen weather
+                isFullScreenWeather = false;
+                int width = getDisplayWidth();
+                frame1.setVisibility(View.VISIBLE);
+                frame2.getLayoutParams().width = width-width/3;
+                //show menu
+                getSupportFragmentManager().beginTransaction().show(menuFragment).commit();
+            }else{
+                //full-screen weather
+                isFullScreenWeather = true;
+                int width = getDisplayWidth();
+                frame1.setVisibility(View.GONE);
+                frame2.getLayoutParams().width = width;
+                //hide menu fragment
+                getSupportFragmentManager().beginTransaction().hide(menuFragment).commit();
+            }
+        }else{
+            //portrait
+            this.onBackPressed();
+        }
+    }
 
     /*
                                                     FRAGMENT 3
@@ -314,17 +324,18 @@ public class MainActivity extends FragmentActivity implements IActionUI{
                     SaveCityTask thread = new SaveCityTask(city, dataBase, this);
                     thread.execute();
                 }else{
-                    Toast.makeText(this, "Weather is available only for settlements", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this.getApplicationContext(), "Weather is available only for settlements", Toast.LENGTH_SHORT).show();
                 }
             }else{
-                Toast.makeText(this, "Retry search with analogue", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this.getApplicationContext(), "Retry search with analogue", Toast.LENGTH_SHORT).show();
             }
         }else{
-            Toast.makeText(this, "Press find and choose city from list", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getApplicationContext(), "Press find and choose city from list", Toast.LENGTH_SHORT).show();
         }
 
     }
 
+    @Override
     public void CitySaved(City city){
         if(city != null) {
             if (city.getName() != null) {
@@ -332,12 +343,69 @@ public class MainActivity extends FragmentActivity implements IActionUI{
                 dialogFragment.dismiss();
             }
         }else{
-            Toast.makeText(this, "This city already is in your Favourites", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getApplicationContext(), "This city already is in your Favourites", Toast.LENGTH_SHORT).show();
         }
     }
 
 
+    /*
+                                    OTHER FUNCTIONS
+    */
+    private int getDisplayWidth(){
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size.x;
+    }
 
+    private void ChangeFragmentsDisplay(){
+        FrameLayout frame1 = (FrameLayout) findViewById(R.id.fragment);
+        FrameLayout frame2 = (FrameLayout) findViewById(R.id.fragment2);
+        //get Display size
+        int width = getDisplayWidth();
+        /*          LANDSCAPE           */
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            if(width >= 800) {
+                int widthNew = width / 3;
+                frame1.getLayoutParams().width = widthNew;
+                frame2.setVisibility(View.VISIBLE);
+                frame2.getLayoutParams().width = width - widthNew;
+
+                if(weatherFragment!= null){
+                    if(weatherFragment.isAdded()){
+                        long id = weatherFragment.getCityID();
+                        String city = weatherFragment.getCityName();
+
+                        if(!isBigDisplay)
+                            this.onBackPressed();
+
+                        weatherFragment = WeatherFragment.newInstance(city,id);
+                    }else{
+                        weatherFragment = WeatherFragment.newInstance(null,0);
+                    }
+                }else{
+                    weatherFragment = WeatherFragment.newInstance(null,0);
+                }
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragment2, weatherFragment).commit();
+                menuFragment.changeOrientationToLandscape();
+                isBigDisplay = true;
+            }
+        /*          PORTRAIT           */
+        }else{
+            if(isFullScreenWeather)
+                onMenuClick();
+
+            frame1.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+            frame2.setVisibility(View.GONE);
+            if(weatherFragment != null){
+                weatherFragment.setArgs(null, 0);
+                getSupportFragmentManager().beginTransaction().remove(weatherFragment).commit();
+            }
+            menuFragment.changeOrientationToPortrait();
+            isBigDisplay = false;
+        }
+    }
 
 
 }

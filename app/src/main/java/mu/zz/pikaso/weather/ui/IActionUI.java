@@ -26,6 +26,7 @@ public interface IActionUI {
     void onClickRefresh(RecyclerView rw, long id);
     void displayForecast(List<Weather> forecast, long cityID, boolean isUpdated);
     void loadWeather(long cityID);
+    void onMenuClick();
 
     //fragment 3
     void onCityAdd(City city);

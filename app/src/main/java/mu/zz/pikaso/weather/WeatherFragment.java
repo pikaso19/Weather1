@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mu.zz.pikaso.weather.adapters.WeatherAdapter;
-import mu.zz.pikaso.weather.representations.City;
 import mu.zz.pikaso.weather.representations.Weather;
 import mu.zz.pikaso.weather.ui.IActionUI;
 
@@ -39,6 +38,19 @@ public class WeatherFragment extends Fragment {
         args.putLong(ARG_PARAM2, id);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public void setArgs(String city, long id){
+        mParam1 = city;
+        mParam2 = id;
+        ResetWindowInfo();
+    }
+
+    public String getCityName(){
+        return mParam1;
+    }
+    public long getCityID(){
+        return mParam2;
     }
 
     public WeatherFragment() {
@@ -78,24 +90,14 @@ public class WeatherFragment extends Fragment {
             weatherAdapter.setWeatherDataset(new ArrayList<Weather>());
             weatherAdapter.setActivity(getActivity());
             recyclerView.setAdapter(weatherAdapter);
-            //when adapter is set signal MainActivity
-            if(mParam2>0){
-                try {
-                    ((IActionUI) getActivity()).loadWeather(mParam2);
-                    refresh.setEnabled(false);
-                } catch (ClassCastException e) {
-                    throw new ClassCastException(getActivity().toString()
-                            + " must implement IActionUI");
-                }
-            }
 
-            if(mParam1 != null)
-                title.setText(mParam1);
+            //when adapter is set signal MainActivity
+            ResetWindowInfo();
 
             menu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    getActivity().onBackPressed();
+                    ((IActionUI) getActivity()).onMenuClick();
                 }
             });
 
@@ -114,7 +116,23 @@ public class WeatherFragment extends Fragment {
         }catch(NullPointerException e){
             e.printStackTrace();
         }
+
     }
+
+    private void ResetWindowInfo(){
+        if(mParam1 != null)
+            title.setText(mParam1);
+        if(mParam2>0){
+            try {
+                ((IActionUI) getActivity()).loadWeather(mParam2);
+                refresh.setEnabled(false);
+            } catch (ClassCastException e) {
+                throw new ClassCastException(getActivity().toString()
+                        + " must implement IActionUI");
+            }
+        }
+    }
+
 
     void DisplayWeather(List<Weather> forecast){
         refresh.setEnabled(true);

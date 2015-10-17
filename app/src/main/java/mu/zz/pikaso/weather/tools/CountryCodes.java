@@ -233,7 +233,7 @@ public class CountryCodes {
         map.put("Tanzania", "TZ");
         map.put("Ukraine", "UA");
         map.put("Uganda", "UG");
-        map.put("United Kingdom", "UK");
+        map.put("United Kingdom", "GB");        //NOT UK
         map.put("USA Minor Outlying Islands", "UM");
         map.put("United States", "US");
         map.put("USA", "US");

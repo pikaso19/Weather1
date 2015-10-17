@@ -1,12 +1,16 @@
 package mu.zz.pikaso.weather;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 
 
 import mu.zz.pikaso.weather.adapters.CitiesListAdapter;
@@ -16,6 +20,8 @@ import mu.zz.pikaso.weather.ui.IActionUI;
 
 public class MenuFragment extends ListFragment {
     private CitiesListAdapter adapter;
+    private Button btnRefreshAll;
+    private Button btnAddCity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -23,8 +29,8 @@ public class MenuFragment extends ListFragment {
         View rootView = inflater.inflate(R.layout.fragment_menu,
                 container, false);
 
-        final Button btnRefreshAll = (Button) rootView.findViewById(R.id.btnRefreshAll);
-        final Button btnAddCity = (Button) rootView.findViewById(R.id.btnAddCity);
+        btnRefreshAll = (Button) rootView.findViewById(R.id.btnRefreshAll);
+        btnAddCity = (Button) rootView.findViewById(R.id.btnAddCity);
          /* -------- BUTTONS CLICK LISTENERS -------- */
         btnRefreshAll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +66,7 @@ public class MenuFragment extends ListFragment {
         getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                ((IActionUI) getActivity()).onCityDelete( adapter.getItem(position) );
+                ((IActionUI) getActivity()).onCityDelete(adapter.getItem(position));
                 return true;
             }
         });
@@ -68,7 +74,7 @@ public class MenuFragment extends ListFragment {
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ((IActionUI) getActivity()).onCitySelected( adapter.getItem(position) );
+                ((IActionUI) getActivity()).onCitySelected(adapter.getItem(position));
             }
         });
 
@@ -94,4 +100,61 @@ public class MenuFragment extends ListFragment {
         adapter.clear();
         adapter = null;
     }
+
+    public void changeOrientationToLandscape(){
+        btnRefreshAll.setText("");
+        btnAddCity.setText("Add");
+        LinearLayout titleLayout = (LinearLayout) getActivity().findViewById(R.id.TitleMenu);
+        LinearLayout mainLayout = (LinearLayout) getActivity().findViewById(R.id.MainMenu);
+
+        int sdk = android.os.Build.VERSION.SDK_INT;
+        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            mainLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.shadow) );
+        } else {
+            mainLayout.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.shadow));
+        }
+
+        //hide title
+        for(int i=0;i<titleLayout.getChildCount();i++){
+            titleLayout.getChildAt(i).setVisibility(View.GONE);
+        }
+
+        mainLayout.removeView(btnRefreshAll);
+        mainLayout.removeView(btnAddCity);
+
+        titleLayout.addView(btnRefreshAll);
+        titleLayout.addView(btnAddCity);
+
+        btnRefreshAll.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f));
+        btnAddCity.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f));
+    }
+
+    public void changeOrientationToPortrait(){
+        btnRefreshAll.setText("Refresh all");
+        btnAddCity.setText("Add city");
+
+        LinearLayout titleLayout = (LinearLayout) getActivity().findViewById(R.id.TitleMenu);
+        LinearLayout mainLayout = (LinearLayout) getActivity().findViewById(R.id.MainMenu);
+        mainLayout.setBackgroundColor(Color.TRANSPARENT);
+        //hide title
+        titleLayout.removeView(btnRefreshAll);
+        titleLayout.removeView(btnAddCity);
+        for(int i=0;i<titleLayout.getChildCount();i++){
+            titleLayout.getChildAt(i).setVisibility(View.VISIBLE);
+        }
+
+        final ListView lv = getListView();
+        mainLayout.removeView(lv);
+        mainLayout.addView(btnRefreshAll);
+        mainLayout.addView(lv);
+        mainLayout.addView(btnAddCity);
+
+        btnRefreshAll.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0.0f));
+        btnAddCity.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0.0f));
+    }
+
+
+
+
+
 }
