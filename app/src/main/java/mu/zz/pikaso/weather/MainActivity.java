@@ -393,17 +393,19 @@ public class MainActivity extends FragmentActivity implements IActionUI{
             }
         /*          PORTRAIT           */
         }else{
-            if(isFullScreenWeather)
-                onMenuClick();
+            if(isBigDisplay) {
+                if (isFullScreenWeather)
+                    onMenuClick();
 
-            frame1.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-            frame2.setVisibility(View.GONE);
-            if(weatherFragment != null){
-                weatherFragment.setArgs(null, 0);
-                getSupportFragmentManager().beginTransaction().remove(weatherFragment).commit();
+                frame1.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+                frame2.setVisibility(View.GONE);
+                if (weatherFragment != null) {
+                    weatherFragment.setArgs(null, 0);
+                    getSupportFragmentManager().beginTransaction().remove(weatherFragment).commit();
+                }
+                menuFragment.changeOrientationToPortrait();
+                isBigDisplay = false;
             }
-            menuFragment.changeOrientationToPortrait();
-            isBigDisplay = false;
         }
     }
 
