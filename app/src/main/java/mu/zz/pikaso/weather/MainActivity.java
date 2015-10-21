@@ -95,7 +95,7 @@ public class MainActivity extends FragmentActivity implements IActionUI{
         if(isAppLoaded)
             ChangeFragmentsDisplay();
     }
-    
+
 
 
 
